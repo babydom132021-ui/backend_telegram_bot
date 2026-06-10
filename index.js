@@ -12,7 +12,6 @@ const User = require('./models/User');
 const Product = require('./models/Product');
 const Cart = require('./models/Cart');
 const Order = require('./models/Order');
-const { generateReceipt } = require('./utils/receiptGenerator');
 
 // Database Connection
 mongoose.connect(process.env.MONGO_URI)
@@ -730,39 +729,6 @@ ${t.scan_exp}`;
             ])
         });
 
-        // Send styled order receipt image
-        try {
-            const receiptItems = orderItems.map(oi => {
-                const prod = cart.items.find(ci => ci.product && ci.product._id.toString() === oi.product.toString());
-                return {
-                    name: prod ? prod.product.name : 'Product',
-                    quantity: oi.quantity,
-                    price: oi.price
-                };
-            });
-
-            const receiptBuffer = await generateReceipt({
-                orderId: customOrderId,
-                user,
-                phone: ctx.session.checkoutData ? ctx.session.checkoutData.phone : (user.phone || '—'),
-                address: ctx.session.checkoutData ? ctx.session.checkoutData.address : (user.address || '—'),
-                items: receiptItems,
-                totalPrice: total,
-                status: 'pending_payment',
-                paymentStatus: 'pending',
-                qrBuffer,
-                createdAt: new Date(),
-                lang: lang
-            });
-
-            await ctx.replyWithPhoto(
-                { source: receiptBuffer },
-                { caption: t.receipt_title.replace('{orderId}', customOrderId), parse_mode: 'Markdown' }
-            );
-        } catch (receiptErr) {
-            console.error('Failed to generate receipt image:', receiptErr);
-            // Non-fatal — QR was already sent
-        }
 
         await ctx.answerCbQuery();
     } catch (err) {
