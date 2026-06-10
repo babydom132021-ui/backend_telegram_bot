@@ -261,7 +261,11 @@ async function checkBakongTransaction(paymentHash) {
                 },
                 timeout: 5000
             });
-            if (response.data && response.data.status && response.data.status.code === 0 && response.data.data) {
+            const hasSuccessStatus = response.data && (
+                (response.data.status && response.data.status.code === 0) ||
+                (response.data.responseCode === 0 || response.data.responseCode === '0' || response.data.responseCode === 0)
+            );
+            if (hasSuccessStatus && response.data.data) {
                 return { success: true, data: response.data.data };
             } else {
                 any404 = true;
