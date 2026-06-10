@@ -12,17 +12,17 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --bg-main: #0b0c10;
-      --bg-card: rgba(255, 255, 255, 0.03);
-      --bg-sidebar: #11131c;
-      --border-color: rgba(255, 255, 255, 0.08);
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-sidebar: #ffffff;
+      --border-color: #e2e8f0;
       --border-focus: #6366f1;
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
       --color-primary: #6366f1;
-      --color-primary-glow: rgba(99, 102, 241, 0.15);
+      --color-primary-glow: rgba(99, 102, 241, 0.08);
       --color-success: #10b981;
-      --color-success-glow: rgba(16, 185, 129, 0.15);
+      --color-success-glow: rgba(16, 185, 129, 0.08);
       --color-warning: #f59e0b;
       --color-danger: #ef4444;
       --sidebar-width: 260px;
@@ -50,8 +50,8 @@
       inset: 0;
       z-index: -1;
       background: 
-        radial-gradient(ellipse at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
+        radial-gradient(ellipse at 10% 20%, rgba(99, 102, 241, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
       pointer-events: none;
     }
 
@@ -88,7 +88,7 @@
       font-size: 18px;
       font-weight: 800;
       letter-spacing: 0.5px;
-      background: linear-gradient(135deg, #fff, var(--text-muted));
+      background: linear-gradient(135deg, var(--text-main), var(--text-muted));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -116,12 +116,13 @@
       transition: all 0.2s ease;
     }
 
-    .nav-item:hover, .nav-item.active {
-      color: #fff;
-      background-color: rgba(255, 255, 255, 0.05);
+    .nav-item:hover {
+      color: var(--color-primary);
+      background-color: var(--color-primary-glow);
     }
 
     .nav-item.active {
+      color: #fff;
       background-color: var(--color-primary);
       box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
     }
@@ -226,11 +227,11 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255, 255, 255, 0.05);
+      background: #ffffff;
       border: 1px solid var(--border-color);
       border-radius: 10px;
       padding: 10px 16px;
-      color: #fff;
+      color: var(--text-main);
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
@@ -239,18 +240,22 @@
     }
 
     .btn:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: #f1f5f9;
+      color: var(--color-primary);
+      border-color: var(--color-primary);
       transform: translateY(-1px);
     }
 
     .btn-primary {
       background: linear-gradient(135deg, var(--color-primary), #8b5cf6);
       border: none;
+      color: #fff;
       box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
     }
 
     .btn-primary:hover {
       background: linear-gradient(135deg, #7477f8, #9a6ffa);
+      color: #fff;
       box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
     }
 
@@ -425,9 +430,9 @@
 
     /* Interactive Status Select for Orders */
     .status-select {
-      background-color: rgba(255, 255, 255, 0.05);
+      background-color: #ffffff;
       border: 1px solid var(--border-color);
-      color: #fff;
+      color: var(--text-main);
       padding: 6px 10px;
       border-radius: 8px;
       font-size: 12px;
@@ -483,11 +488,11 @@
 
     .search-wrapper input {
       width: 100%;
-      background-color: rgba(255, 255, 255, 0.04);
+      background-color: #ffffff;
       border: 1px solid var(--border-color);
       border-radius: 10px;
       padding: 10px 16px 10px 40px;
-      color: #fff;
+      color: var(--text-main);
       outline: none;
       font-size: 14px;
       transition: all 0.2s;
@@ -499,9 +504,9 @@
     }
 
     .filter-select {
-      background-color: rgba(255, 255, 255, 0.04);
+      background-color: #ffffff;
       border: 1px solid var(--border-color);
-      color: #fff;
+      color: var(--text-main);
       padding: 10px 16px;
       border-radius: 10px;
       outline: none;

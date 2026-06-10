@@ -10,15 +10,15 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <style>
     :root {
-      --bg-main: #0b0c10;
-      --bg-card: rgba(255, 255, 255, 0.03);
-      --border-color: rgba(255, 255, 255, 0.08);
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --border-color: #e2e8f0;
       --color-primary: #6366f1;
-      --color-primary-glow: rgba(99, 102, 241, 0.2);
+      --color-primary-glow: rgba(99, 102, 241, 0.08);
       --color-danger: #ef4444;
-      --color-danger-glow: rgba(239, 68, 68, 0.1);
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
+      --color-danger-glow: rgba(239, 68, 68, 0.08);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
     }
 
     * {
@@ -60,12 +60,12 @@
       width: 400px;
       max-width: 90%;
       backdrop-filter: blur(20px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
       transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s;
     }
 
     .card:hover {
-      border-color: rgba(255, 255, 255, 0.12);
+      border-color: var(--color-primary);
     }
 
     /* Header & Branding */
@@ -101,7 +101,7 @@
       font-size: 24px;
       font-weight: 800;
       letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #fff, #9ca3af);
+      background: linear-gradient(135deg, var(--text-main), var(--text-muted));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -166,11 +166,11 @@
 
     .input-wrapper input {
       width: 100%;
-      background: rgba(255, 255, 255, 0.04);
+      background: #ffffff;
       border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 14px 44px 14px 40px;
-      color: #fff;
+      color: var(--text-main);
       font-size: 14px;
       outline: none;
       transition: all 0.2s ease;
@@ -178,7 +178,7 @@
 
     .input-wrapper input:focus {
       border-color: var(--color-primary);
-      background: rgba(255, 255, 255, 0.06);
+      background: #ffffff;
       box-shadow: 0 0 0 3px var(--color-primary-glow);
     }
 
@@ -197,7 +197,7 @@
     }
 
     .input-wrapper .toggle-pwd:hover {
-      color: #fff;
+      color: var(--text-main);
     }
 
     /* Sign In Button */
