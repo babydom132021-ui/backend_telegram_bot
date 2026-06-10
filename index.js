@@ -907,7 +907,12 @@ bot.action(/check_payment_(.+)/, async (ctx) => {
         }
     } catch (err) {
         console.error('Error verifying payment:', err.response ? err.response.data : err.message);
-        await ctx.answerCbQuery(t.payment_failed_popup, { show_alert: true });
+        const status = err.response ? err.response.status : null;
+        if (status === 502 || status === 503 || status === 504 || status === 500 || !err.response) {
+            await ctx.answerCbQuery(t.payment_pending_popup, { show_alert: true });
+        } else {
+            await ctx.answerCbQuery(t.payment_failed_popup, { show_alert: true });
+        }
     }
 });
 
