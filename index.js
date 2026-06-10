@@ -1045,12 +1045,29 @@ bot.command('simulate_pay', async (ctx) => {
 
     const updatedOrder = await Order.findOneAndUpdate(
         { orderId, status: 'pending_payment' },
-        { status: 'pending', paymentStatus: 'paid' },
+        { 
+            status: 'pending', 
+            paymentStatus: 'paid',
+            paymentDetails: { simulated: true, provider: 'Bakong-SIT', verifiedAt: new Date() },
+            paidAt: new Date()
+        },
         { new: true }
     );
 
     if (updatedOrder) {
-        await ctx.reply(t.payment_success.replace('{orderId}', order.orderId), { parse_mode: 'Markdown', ...getMainMenu(lang) });
+        const successMsg = lang === 'km'
+            ? `✅ ការទូទាត់ទទួលបានជោគជ័យ។ ការបញ្ជាទិញរបស់អ្នកត្រូវបានបញ្ជាក់។\n\n` +
+              `🧾 *ព័ត៌មានលម្អិតការទូទាត់:*\n` +
+              `- *លេខសំគាល់ការបញ្ជាទិញ:* \`${updatedOrder.orderId}\`\n` +
+              `- *ចំនួនទឹកប្រាក់:* \`$${updatedOrder.totalPrice.toFixed(2)}\`\n` +
+              `- *ស្ថានភាពទូទាត់:* \`Paid (Simulated)\``
+            : `✅ Payment received successfully. Your order has been confirmed.\n\n` +
+              `🧾 *Payment Details:*\n` +
+              `- *Order ID:* \`${updatedOrder.orderId}\`\n` +
+              `- *Amount:* \`$${updatedOrder.totalPrice.toFixed(2)}\`\n` +
+              `- *Payment Status:* \`Paid (Simulated)\``;
+
+        await ctx.reply(successMsg, { parse_mode: 'Markdown', ...getMainMenu(lang) });
     }
 });
 
