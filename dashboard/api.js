@@ -199,25 +199,52 @@ router.post('/orders/:id/check-payment', async (req, res) => {
             return res.status(400).json({ error: 'Order is not pending payment' });
         }
 
-        const getBakongApiUrl = () => {
-            const merchantId = process.env.BAKONG_MERCHANT_ID;
-            if (!merchantId || merchantId === 'soklin_chen@bkrt') {
-                return process.env.BAKONG_DEV_BASE_API_URL || 'https://sit-api-bakong.nbc.gov.kh/v1';
+        const checkBakongTransaction = async (paymentHash) => {
+            const axios = require('axios');
+            const token = process.env.BAKONG_TOKEN;
+            const urls = [
+                process.env.BAKONG_PROD_BASE_API_URL || 'https://api-bakong.nbc.gov.kh/v1',
+                process.env.BAKONG_DEV_BASE_API_URL || 'https://sit-api-bakong.nbc.gov.kh/v1'
+            ];
+
+            let lastError = null;
+            let any404 = false;
+
+            for (const baseUrl of urls) {
+                try {
+                    const url = `${baseUrl}/check_transaction_by_md5`;
+                    const response = await axios.post(url, { md5: paymentHash }, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        timeout: 5000
+                    });
+                    if (response.data && response.data.status && response.data.status.code === 0 && response.data.data) {
+                        return { success: true, data: response.data.data };
+                    }
+                } catch (err) {
+                    console.error(`Error checking Bakong API at ${baseUrl}:`, err.response ? err.response.status : err.message);
+                    lastError = err;
+                    if (err.response && err.response.status === 404) {
+                        any404 = true;
+                    }
+                }
             }
-            return process.env.BAKONG_PROD_BASE_API_URL || 'https://api-bakong.nbc.gov.kh/v1';
+
+            if (any404) {
+                return { success: false, data: null };
+            }
+
+            if (lastError) {
+                throw lastError;
+            }
+            return { success: false, data: null };
         };
 
-        const axios = require('axios');
-        const url = `${getBakongApiUrl()}/check_transaction_by_md5`;
-
-        let response;
+        let checkResult;
         try {
-            response = await axios.post(url, { md5: order.paymentHash }, {
-                headers: {
-                    'Authorization': `Bearer ${process.env.BAKONG_TOKEN}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+            checkResult = await checkBakongTransaction(order.paymentHash);
         } catch (axiosErr) {
             console.error('Bakong API request failed:', axiosErr.message);
             const status = axiosErr.response ? axiosErr.response.status : null;
@@ -232,13 +259,13 @@ router.post('/orders/:id/check-payment', async (req, res) => {
             return res.json({ success: true, paid: false, message: msg });
         }
 
-        if (response.data && response.data.status && response.data.status.code === 0 && response.data.data) {
+        if (checkResult.success && checkResult.data) {
             const updatedOrder = await Order.findOneAndUpdate(
                 { _id: req.params.id, status: 'pending_payment' },
                 { 
                     status: 'pending', 
                     paymentStatus: 'paid',
-                    paymentDetails: response.data.data,
+                    paymentDetails: checkResult.data,
                     paidAt: new Date()
                 },
                 { new: true }
