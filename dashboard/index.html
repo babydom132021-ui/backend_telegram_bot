@@ -937,6 +937,47 @@
       cursor: not-allowed;
     }
 
+    /* Custom Scrollbar for tables to fit the dark premium theme */
+    .table-container::-webkit-scrollbar {
+      height: 6px;
+    }
+    .table-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 3px;
+    }
+    .table-container::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+    .table-container::-webkit-scrollbar-thumb:hover {
+      background: var(--color-primary);
+    }
+
+    /* Sidebar Overlay for Mobile Backdrop */
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 99;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-speed) ease;
+    }
+    .sidebar-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Filter Group wrapper */
+    .filter-group {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-grow: 1;
+      max-width: 600px;
+    }
+
     /* Responsive adjustments */
     @media (max-width: 992px) {
       aside {
@@ -947,13 +988,81 @@
       }
       main {
         margin-left: 0;
-        padding: 20px;
+        padding: 24px 20px;
       }
       .grid-two-cols {
         grid-template-columns: 1fr;
       }
       .hamburger {
         display: block !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .metrics-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+      }
+      .content-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .header-actions {
+        width: 100%;
+      }
+      .header-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+        max-width: 100%;
+        width: 100%;
+      }
+      .search-wrapper {
+        max-width: 100%;
+        width: 100%;
+      }
+      .filter-select {
+        width: 100%;
+      }
+      .filter-bar .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .modal {
+        border-radius: 16px;
+      }
+      .modal-header, .modal-body, .modal-footer {
+        padding: 16px;
+      }
+      .modal-footer {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .modal-footer .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .products-grid {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -970,6 +1079,9 @@
 </head>
 <body>
   <div class="ambient-bg"></div>
+
+  <!-- Sidebar Overlay for Mobile -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
   <!-- Sidebar -->
   <aside id="sidebar">
@@ -1208,7 +1320,7 @@
     <!-- PRODUCTS TAB -->
     <section id="tab-products" class="section-content">
       <div class="filter-bar" style="justify-content: space-between;">
-        <div style="display: flex; gap: 16px; align-items: center; flex-grow: 1; max-width: 600px;">
+        <div class="filter-group">
           <div class="search-wrapper">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="product-search" placeholder="Search products..." oninput="handleProductFilterChange()"/>
@@ -1377,7 +1489,15 @@
     // --- SIDEBAR TOGGLE ---
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('open');
+      const overlay = document.getElementById('sidebar-overlay');
+      const isOpen = sidebar.classList.toggle('open');
+      if (overlay) {
+        if (isOpen) {
+          overlay.classList.add('open');
+        } else {
+          overlay.classList.remove('open');
+        }
+      }
     }
 
     // --- NAVIGATION TAB SWITCHER ---
@@ -1416,6 +1536,8 @@
       // Close sidebar in mobile view
       const sidebar = document.getElementById('sidebar');
       sidebar.classList.remove('open');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (overlay) overlay.classList.remove('open');
     }
 
     function refreshCurrentTab() {
@@ -1859,6 +1981,13 @@
       }
 
       modal.style.display = 'flex';
+
+      // Close modal on click outside of the modal body
+      modal.onclick = function(e) {
+        if (e.target === modal) {
+          closeProductModal();
+        }
+      };
     }
 
     function closeProductModal() {

@@ -260,6 +260,40 @@
       20%, 60% { transform: translateX(-8px); }
       40%, 80% { transform: translateX(8px); }
     }
+
+    /* Responsive Design adjustments */
+    @media (max-width: 480px) {
+      .card {
+        padding: 32px 20px;
+        border-radius: 20px;
+      }
+      .logo-container {
+        margin-bottom: 24px;
+      }
+      .icon-wrapper {
+        width: 56px;
+        height: 56px;
+        font-size: 24px;
+        margin-bottom: 12px;
+      }
+      .logo-container h1 {
+        font-size: 20px;
+      }
+      .input-wrapper input {
+        padding: 12px 40px 12px 36px;
+        font-size: 13px;
+      }
+      .input-wrapper i.field-icon {
+        left: 12px;
+      }
+      .input-wrapper .toggle-pwd {
+        right: 12px;
+      }
+      .btn {
+        padding: 12px;
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
