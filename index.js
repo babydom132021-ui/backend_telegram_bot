@@ -309,7 +309,7 @@ function startPaymentPolling(orderId, userId, chatId, lang, messageId = null) {
                     await bot.telegram.sendMessage(
                         chatId,
                         t.payment_success.replace('{orderId}', orderId),
-                        getMainMenu(lang)
+                        { parse_mode: 'Markdown', ...getMainMenu(lang) }
                     );
 
                     if (messageId) {
@@ -870,6 +870,10 @@ bot.action(/check_payment_(.+)/, async (ctx) => {
 
     if (order.status !== 'pending_payment') {
         if (order.status === 'pending' || order.status === 'completed' || order.status === 'shipping') {
+            try {
+                await ctx.deleteMessage();
+            } catch (e) {}
+            await ctx.replyWithMarkdown(t.payment_success.replace('{orderId}', order.orderId), getMainMenu(lang));
             return ctx.answerCbQuery(t.payment_success_popup, { show_alert: true });
         } else {
             return ctx.answerCbQuery(t.status_already.replace('{status}', order.status.toUpperCase()), { show_alert: true });
@@ -1441,7 +1445,7 @@ app.post('/payment-webhook', async (req, res) => {
                 await bot.telegram.sendMessage(
                     order.user.telegramId, 
                     t.payment_success.replace('{orderId}', order.orderId),
-                    { parse_mode: 'Markdown' }
+                    { parse_mode: 'Markdown', ...getMainMenu(lang) }
                 );
             }
             console.log(`Payment confirmed via webhook for Order: ${order.orderId}`);
