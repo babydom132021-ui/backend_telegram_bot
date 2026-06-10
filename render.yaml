@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: telegram-ecommerce-bot
+    runtime: node
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: MONGO_URI
+        sync: false
+      - key: ADMIN_DASHBOARD_KEY
+        sync: false
+      - key: BAKONG_DEV_BASE_API_URL
+        value: https://sit-api-bakong.nbc.gov.kh/v1
+      - key: BAKONG_PROD_BASE_API_URL
+        value: https://api-bakong.nbc.gov.kh/v1
+      - key: BAKONG_TOKEN
+        sync: false
+      - key: BAKONG_MERCHANT_ID
+        sync: false
+      - key: BAKONG_MERCHANT_NAME
+        sync: false
