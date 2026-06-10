@@ -240,6 +240,14 @@ const translations = {
 // --- REAL-TIME PAYMENT POLLING SYSTEM ---
 const activePollers = {};
 
+function getBakongApiUrl() {
+    const merchantId = process.env.BAKONG_MERCHANT_ID;
+    if (!merchantId || merchantId === 'soklin_chen@bkrt') {
+        return process.env.BAKONG_DEV_BASE_API_URL || 'https://sit-api-bakong.nbc.gov.kh/v1';
+    }
+    return process.env.BAKONG_PROD_BASE_API_URL || 'https://api-bakong.nbc.gov.kh/v1';
+}
+
 function startPaymentPolling(orderId, userId, chatId, lang, messageId = null) {
     if (activePollers[orderId]) return;
 
@@ -289,7 +297,7 @@ function startPaymentPolling(orderId, userId, chatId, lang, messageId = null) {
             }
 
             const axios = require('axios');
-            const url = `${process.env.BAKONG_DEV_BASE_API_URL}/check_transaction_by_md5`;
+            const url = `${getBakongApiUrl()}/check_transaction_by_md5`;
             const response = await axios.post(url, { md5: order.paymentHash }, {
                 headers: {
                     'Authorization': `Bearer ${process.env.BAKONG_TOKEN}`,
@@ -921,33 +929,8 @@ bot.action(/check_payment_(.+)/, async (ctx) => {
         }
     }
 
-    // Check expiration (older than 10 minutes)
-    const isExpired = (Date.now() - order.createdAt.getTime()) > (10 * 60 * 1000);
-    if (isExpired) {
-        const updatedOrder = await Order.findOneAndUpdate(
-            { orderId, status: 'pending_payment' },
-            { status: 'cancelled' },
-            { new: true }
-        );
-        if (updatedOrder) {
-            // Restore stock
-            for (let item of order.items) {
-                await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
-            }
-        }
-        try {
-            await ctx.deleteMessage();
-        } catch (e) {}
-        return ctx.answerCbQuery(
-            lang === 'km'
-                ? "❌ ការទូទាត់មិនទាន់បានបញ្ចប់ ឬហួសពេលកំណត់។ សូមបង្កើតកូដ QR ថ្មីហើយព្យាយាមម្តងទៀត។"
-                : "❌ Payment was not completed or has expired. Please generate a new QR code and try again.",
-            { show_alert: true }
-        );
-    }
-
     const axios = require('axios');
-    const url = `${process.env.BAKONG_DEV_BASE_API_URL}/check_transaction_by_md5`;
+    const url = `${getBakongApiUrl()}/check_transaction_by_md5`;
 
     try {
         const response = await axios.post(url, { md5: order.paymentHash }, {
@@ -992,32 +975,52 @@ bot.action(/check_payment_(.+)/, async (ctx) => {
                 lang === 'km' ? 'ការទូទាត់ទទួលបានជោគជ័យ! 🎉' : 'Payment successful! 🎉',
                 { show_alert: true }
             );
-        } else {
-            await ctx.answerCbQuery(
-                lang === 'km'
-                    ? "⏳ មិនទាន់រកឃើញការទូទាត់ប្រាក់នៅឡើយទេ។ សូមរង់ចាំបន្តិច រួចព្យាយាមម្តងទៀត។"
-                    : "⏳ Payment not detected yet. Please wait a moment and try again.",
-                { show_alert: true }
-            );
+            return;
         }
     } catch (err) {
         console.error('Error verifying payment:', err.response ? err.response.data : err.message);
         const status = err.response ? err.response.status : null;
-        if (status === 404 || status === 502 || status === 503 || status === 504 || status === 500 || !err.response) {
-            await ctx.answerCbQuery(
+        if (status === 500 || status === 502 || status === 503 || status === 504 || !err.response) {
+            return ctx.answerCbQuery(
                 lang === 'km'
                     ? "⏳ មិនទាន់រកឃើញការទូទាត់ប្រាក់នៅឡើយទេ។ សូមរង់ចាំបន្តិច រួចព្យាយាមម្តងទៀត។"
                     : "⏳ Payment not detected yet. Please wait a moment and try again.",
                 { show_alert: true }
             );
-        } else {
-            await ctx.answerCbQuery(
-                lang === 'km'
-                    ? "❌ ការទូទាត់មិនទាន់បានបញ្ចប់ ឬហួសពេលកំណត់។ សូមបង្កើតកូដ QR ថ្មីហើយព្យាយាមម្តងទៀត។"
-                    : "❌ Payment was not completed or has expired. Please generate a new QR code and try again.",
-                { show_alert: true }
-            );
         }
+    }
+
+    // Check expiration if not found (404) or status code !== 0
+    const createdAtTime = order.createdAt ? order.createdAt.getTime() : Date.now();
+    const isExpired = (Date.now() - createdAtTime) > (10 * 60 * 1000);
+    if (isExpired) {
+        const updatedOrder = await Order.findOneAndUpdate(
+            { orderId, status: 'pending_payment' },
+            { status: 'cancelled' },
+            { new: true }
+        );
+        if (updatedOrder) {
+            // Restore stock
+            for (let item of order.items) {
+                await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
+            }
+        }
+        try {
+            await ctx.deleteMessage();
+        } catch (e) {}
+        return ctx.answerCbQuery(
+            lang === 'km'
+                ? "❌ ការទូទាត់មិនទាន់បានបញ្ចប់ ឬហួសពេលកំណត់។ សូមបង្កើតកូដ QR ថ្មីហើយព្យាយាមម្តងទៀត។"
+                : "❌ Payment was not completed or has expired. Please generate a new QR code and try again.",
+            { show_alert: true }
+        );
+    } else {
+        return ctx.answerCbQuery(
+            lang === 'km'
+                ? "⏳ មិនទាន់រកឃើញការទូទាត់ប្រាក់នៅឡើយទេ។ សូមរង់ចាំបន្តិច រួចព្យាយាមម្តងទៀត។"
+                : "⏳ Payment not detected yet. Please wait a moment and try again.",
+            { show_alert: true }
+        );
     }
 });
 

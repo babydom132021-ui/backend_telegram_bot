@@ -199,8 +199,16 @@ router.post('/orders/:id/check-payment', async (req, res) => {
             return res.status(400).json({ error: 'Order is not pending payment' });
         }
 
+        const getBakongApiUrl = () => {
+            const merchantId = process.env.BAKONG_MERCHANT_ID;
+            if (!merchantId || merchantId === 'soklin_chen@bkrt') {
+                return process.env.BAKONG_DEV_BASE_API_URL || 'https://sit-api-bakong.nbc.gov.kh/v1';
+            }
+            return process.env.BAKONG_PROD_BASE_API_URL || 'https://api-bakong.nbc.gov.kh/v1';
+        };
+
         const axios = require('axios');
-        const url = `${process.env.BAKONG_DEV_BASE_API_URL}/check_transaction_by_md5`;
+        const url = `${getBakongApiUrl()}/check_transaction_by_md5`;
 
         let response;
         try {
@@ -227,7 +235,12 @@ router.post('/orders/:id/check-payment', async (req, res) => {
         if (response.data && response.data.status && response.data.status.code === 0 && response.data.data) {
             const updatedOrder = await Order.findOneAndUpdate(
                 { _id: req.params.id, status: 'pending_payment' },
-                { status: 'pending', paymentStatus: 'paid' },
+                { 
+                    status: 'pending', 
+                    paymentStatus: 'paid',
+                    paymentDetails: response.data.data,
+                    paidAt: new Date()
+                },
                 { new: true }
             );
 
@@ -235,11 +248,22 @@ router.post('/orders/:id/check-payment', async (req, res) => {
                 // Send Telegram notification on successful payment confirmation
                 if (order.user && order.user.telegramId && req.bot && req.translations && req.getMainMenu) {
                     const lang = order.user.language || 'en';
-                    const t = req.translations[lang] || req.translations.en;
+                    const successMsg = lang === 'km'
+                        ? `✅ ការទូទាត់ទទួលបានជោគជ័យ។ ការបញ្ជាទិញរបស់អ្នកត្រូវបានបញ្ជាក់។\n\n` +
+                          `🧾 *ព័ត៌មានលម្អិតការទូទាត់:*\n` +
+                          `- *លេខសំគាល់ការបញ្ជាទិញ:* \`${updatedOrder.orderId}\`\n` +
+                          `- *ចំនួនទឹកប្រាក់:* \`$${updatedOrder.totalPrice.toFixed(2)}\`\n` +
+                          `- *ស្ថានភាពទូទាត់:* \`Paid\``
+                        : `✅ Payment received successfully. Your order has been confirmed.\n\n` +
+                          `🧾 *Payment Details:*\n` +
+                          `- *Order ID:* \`${updatedOrder.orderId}\`\n` +
+                          `- *Amount:* \`$${updatedOrder.totalPrice.toFixed(2)}\`\n` +
+                          `- *Payment Status:* \`Paid\``;
+
                     try {
                         await req.bot.telegram.sendMessage(
                             order.user.telegramId,
-                            t.payment_success.replace('{orderId}', order.orderId),
+                            successMsg,
                             { parse_mode: 'Markdown', ...req.getMainMenu(lang) }
                         );
                     } catch (telegramErr) {
