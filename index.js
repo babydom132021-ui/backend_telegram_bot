@@ -879,7 +879,7 @@ bot.action(/check_payment_(.+)/, async (ctx) => {
             try {
                 await ctx.deleteMessage();
             } catch (e) {}
-            await ctx.replyWithMarkdown(t.payment_success.replace('{orderId}', order.orderId), getMainMenu(lang));
+            await ctx.reply(t.payment_success.replace('{orderId}', order.orderId), { parse_mode: 'Markdown', ...getMainMenu(lang) });
             return ctx.answerCbQuery(t.payment_success_popup, { show_alert: true });
         } else {
             return ctx.answerCbQuery(t.status_already.replace('{status}', order.status.toUpperCase()), { show_alert: true });
@@ -905,7 +905,7 @@ bot.action(/check_payment_(.+)/, async (ctx) => {
             );
 
             if (updatedOrder) {
-                await ctx.replyWithMarkdown(t.payment_success.replace('{orderId}', order.orderId), getMainMenu(lang));
+                await ctx.reply(t.payment_success.replace('{orderId}', order.orderId), { parse_mode: 'Markdown', ...getMainMenu(lang) });
                 try {
                     await ctx.deleteMessage();
                 } catch (e) {}
@@ -946,7 +946,7 @@ bot.action(/simulate_payment_(.+)/, async (ctx) => {
     );
 
     if (updatedOrder) {
-        await ctx.replyWithMarkdown(t.payment_success.replace('{orderId}', order.orderId), getMainMenu(lang));
+        await ctx.reply(t.payment_success.replace('{orderId}', order.orderId), { parse_mode: 'Markdown', ...getMainMenu(lang) });
         try {
             await ctx.deleteMessage();
         } catch (e) {}
