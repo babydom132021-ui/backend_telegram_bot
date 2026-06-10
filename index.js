@@ -18,6 +18,7 @@ mongoose.connect(process.env.MONGO_URI)
     .then(async () => {
         console.log('MongoDB connected');
         await seedProducts();
+        await resumePendingOrderPolling();
     })
     .catch(err => console.error(err));
 
@@ -141,6 +142,9 @@ const translations = {
         payment_verified: "Payment verified successfully!",
         payment_pending: "⏳ Payment not found or still pending. Please scan the QR code and complete payment first.",
         api_error: "⚠️ API Error verifying payment. Please try again later.",
+        payment_success_popup: "Payment Successful 🎉",
+        payment_pending_popup: "Payment Pending ⏳ Please wait",
+        payment_failed_popup: "Payment Failed ❌ Try again",
         order_cancelled: "❌ Order {orderId} cancelled.",
         order_cannot_cancel: "This order cannot be cancelled as it is already paid or processed.",
         search_prompt: "Please enter the product name you are looking for:",
@@ -214,6 +218,9 @@ const translations = {
         payment_verified: "ការទូទាត់ត្រូវបានផ្ទៀងផ្ទាត់ដោយជោគជ័យ!",
         payment_pending: "⏳ មិនទាន់រកឃើញការទូទាត់ ឬកំពុងរង់ចាំ។ សូមស្កែនកូដ QR ហើយបញ្ចប់ការទូទាត់ជាមុនសិន។",
         api_error: "⚠️ កំហុស API ក្នុងការផ្ទៀងផ្ទាត់ការទូទាត់។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។",
+        payment_success_popup: "ការទូទាត់ជោគជ័យ 🎉",
+        payment_pending_popup: "កំពុងរង់ចាំការទូទាត់ ⏳ សូមរង់ចាំ",
+        payment_failed_popup: "ការទូទាត់បរាជ័យ ❌ ព្យាយាមម្តងទៀត",
         order_cancelled: "❌ ការបញ្ជាទិញ {orderId} ត្រូវបានបោះបង់។",
         order_cannot_cancel: "ការបញ្ជាទិញនេះមិនអាចបោះបង់បានទេ ព្រោះវាត្រូវបានបង់ប្រាក់ ឬដំណើរការរួចហើយ។",
         search_prompt: "សូមបញ្ចូលឈ្មោះទំនិញដែលអ្នកកំពុងស្វែងរក៖",
@@ -229,6 +236,114 @@ const translations = {
         order_details_date: "កាលបរិច្ឆេទ"
     }
 };
+
+// --- REAL-TIME PAYMENT POLLING SYSTEM ---
+const activePollers = {};
+
+function startPaymentPolling(orderId, userId, chatId, lang, messageId = null) {
+    if (activePollers[orderId]) return;
+
+    const intervalTime = 7000; // Check every 7 seconds
+    const expireTime = Date.now() + 10 * 60 * 1000; // Expire after 10 minutes
+
+    const timer = setInterval(async () => {
+        if (Date.now() > expireTime) {
+            clearInterval(timer);
+            delete activePollers[orderId];
+            
+            try {
+                const order = await Order.findOne({ orderId });
+                if (order && order.status === 'pending_payment') {
+                    for (let item of order.items) {
+                        await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
+                    }
+                    order.status = 'cancelled';
+                    await order.save();
+
+                    await bot.telegram.sendMessage(
+                        chatId,
+                        lang === 'km'
+                            ? `⚠️ ការបញ្ជាទិញ #${orderId.slice(-8)} ត្រូវបានបោះបង់ដោយស្វ័យប្រវត្ត ដោយសារតែមិនមានការទូទាត់ក្នុងរយៈពេល ១០ នាទី។`
+                            : `⚠️ Order #${orderId.slice(-8)} was automatically cancelled because no payment was received within 10 minutes.`,
+                        getMainMenu(lang)
+                    );
+
+                    if (messageId) {
+                        try {
+                            await bot.telegram.deleteMessage(chatId, messageId);
+                        } catch (e) {}
+                    }
+                }
+            } catch (err) {
+                console.error(`Error in timeout handling for order ${orderId}:`, err);
+            }
+            return;
+        }
+
+        try {
+            const order = await Order.findOne({ orderId });
+            if (!order || order.status !== 'pending_payment') {
+                clearInterval(timer);
+                delete activePollers[orderId];
+                return;
+            }
+
+            const axios = require('axios');
+            const url = `${process.env.BAKONG_DEV_BASE_API_URL}/check_transaction_by_md5`;
+            const response = await axios.post(url, { md5: order.paymentHash }, {
+                headers: {
+                    'Authorization': `Bearer ${process.env.BAKONG_TOKEN}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.data && response.data.status && response.data.status.code === 0 && response.data.data) {
+                const updatedOrder = await Order.findOneAndUpdate(
+                    { orderId, status: 'pending_payment' },
+                    { status: 'pending', paymentStatus: 'paid' },
+                    { new: true }
+                );
+
+                if (updatedOrder) {
+                    const t = translations[lang] || translations.en;
+                    await bot.telegram.sendMessage(
+                        chatId,
+                        t.payment_success.replace('{orderId}', orderId),
+                        getMainMenu(lang)
+                    );
+
+                    if (messageId) {
+                        try {
+                            await bot.telegram.deleteMessage(chatId, messageId);
+                        } catch (e) {}
+                    }
+                }
+
+                clearInterval(timer);
+                delete activePollers[orderId];
+            }
+        } catch (err) {
+            console.error(`Error in background polling for order ${orderId}:`, err.message);
+        }
+    }, intervalTime);
+
+    activePollers[orderId] = timer;
+}
+
+async function resumePendingOrderPolling() {
+    try {
+        const pendingOrders = await Order.find({ status: 'pending_payment' }).populate('user');
+        console.log(`Resuming background payment polling for ${pendingOrders.length} pending orders...`);
+        for (const order of pendingOrders) {
+            if (order.user && order.user.telegramId) {
+                const lang = order.user.language || 'en';
+                startPaymentPolling(order.orderId, order.user._id, order.user.telegramId, lang);
+            }
+        }
+    } catch (err) {
+        console.error('Failed to resume pending order polling:', err);
+    }
+}
 
 function getMainMenu(lang) {
     const t = translations[lang] || translations.en;
@@ -720,7 +835,7 @@ bot.action('pay_now', async (ctx) => {
 
 ${t.scan_exp}`;
 
-        await ctx.replyWithPhoto({ source: qrBuffer }, {
+        const sentMsg = await ctx.replyWithPhoto({ source: qrBuffer }, {
             caption: msg,
             parse_mode: 'Markdown',
             ...Markup.inlineKeyboard([
@@ -728,6 +843,8 @@ ${t.scan_exp}`;
                 [Markup.button.callback(t.cancel_order_btn, `cancel_payment_${customOrderId}`)]
             ])
         });
+
+        startPaymentPolling(customOrderId, user._id, ctx.chat.id, lang, sentMsg.message_id);
 
 
         await ctx.answerCbQuery();
@@ -752,7 +869,11 @@ bot.action(/check_payment_(.+)/, async (ctx) => {
     if (!order) return ctx.answerCbQuery(t.order_not_found, { show_alert: true });
 
     if (order.status !== 'pending_payment') {
-        return ctx.answerCbQuery(t.status_already.replace('{status}', order.status.toUpperCase()), { show_alert: true });
+        if (order.status === 'pending' || order.status === 'completed' || order.status === 'shipping') {
+            return ctx.answerCbQuery(t.payment_success_popup, { show_alert: true });
+        } else {
+            return ctx.answerCbQuery(t.status_already.replace('{status}', order.status.toUpperCase()), { show_alert: true });
+        }
     }
 
     const axios = require('axios');
@@ -767,22 +888,26 @@ bot.action(/check_payment_(.+)/, async (ctx) => {
         });
 
         if (response.data && response.data.status && response.data.status.code === 0 && response.data.data) {
-            order.status = 'pending';
-            order.paymentStatus = 'paid';
-            await order.save();
+            const updatedOrder = await Order.findOneAndUpdate(
+                { orderId, status: 'pending_payment' },
+                { status: 'pending', paymentStatus: 'paid' },
+                { new: true }
+            );
 
-            await ctx.replyWithMarkdown(t.payment_success.replace('{orderId}', order.orderId), getMainMenu(lang));
-            await ctx.answerCbQuery(t.payment_verified, { show_alert: true });
-            
-            try {
-                await ctx.deleteMessage();
-            } catch (e) {}
+            if (updatedOrder) {
+                await ctx.replyWithMarkdown(t.payment_success.replace('{orderId}', order.orderId), getMainMenu(lang));
+                try {
+                    await ctx.deleteMessage();
+                } catch (e) {}
+            }
+
+            await ctx.answerCbQuery(t.payment_success_popup, { show_alert: true });
         } else {
-            await ctx.answerCbQuery(t.payment_pending, { show_alert: true });
+            await ctx.answerCbQuery(t.payment_pending_popup, { show_alert: true });
         }
     } catch (err) {
         console.error('Error verifying payment:', err.response ? err.response.data : err.message);
-        await ctx.answerCbQuery(t.api_error, { show_alert: true });
+        await ctx.answerCbQuery(t.payment_failed_popup, { show_alert: true });
     }
 });
 
