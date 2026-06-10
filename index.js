@@ -81,6 +81,165 @@ bot.use(async (ctx, next) => {
     }
 });
 
+// Localization Translations
+const translations = {
+    en: {
+        welcome: "Welcome to our E-commerce Store! 🏪\nPlease choose an option below:\n(P.S. Send /adminsecret to become an admin for testing)",
+        menu_shop: "🛍️ Shop Products",
+        menu_search: "🔎 Search",
+        menu_cart: "🛒 My Cart",
+        menu_orders: "📦 My Orders",
+        menu_lang: "🌐 Language / ភាសា",
+        select_lang: "Please select your preferred language:",
+        lang_updated: "Language updated to English! 🇺🇸",
+        no_categories: "No products available at the moment.",
+        select_category: "Select a category:",
+        no_products_cat: "No products in this category.",
+        showing_products: "Showing products in *{category}*:",
+        add_to_cart: "Add to Cart 🛒",
+        view_details: "View Details ℹ️",
+        back_categories: "⬅️ Back to Categories",
+        product_not_found: "Product not found.",
+        price: "Price",
+        stock: "Stock",
+        out_of_stock: "Out of stock",
+        no_description: "No description",
+        empty_cart: "Your cart is empty. 🛒",
+        cart_title: "*🛒 Your Cart:*\n\n",
+        qty: "Qty",
+        remove: "❌ Remove",
+        total_price: "Total Price",
+        checkout: "💳 Checkout",
+        clear_cart: "🗑️ Clear Cart",
+        cart_cleared: "Cart cleared.",
+        back_cart: "⬅️ Back to Cart",
+        enter_phone: "📱 Please enter your phone number:",
+        invalid_phone: "⚠️ Invalid phone number. Please enter only numbers (9 to 12 digits):",
+        back_phone: "⬅️ Back to Phone",
+        enter_address: "🏠 Please enter your delivery address:",
+        address_required: "⚠️ Address is required. Please enter your delivery address:",
+        order_summary: "🧾 *Order Summary*",
+        summary_phone: "Phone",
+        summary_address: "Address",
+        summary_items: "Items",
+        summary_total: "Total",
+        pay_now_btn: "💳 Pay Now",
+        cancel_btn: "❌ Cancel",
+        no_active_order: "No active order confirmation found.",
+        empty_cart_proceed: "Your cart is empty. Cannot proceed.",
+        items_out_of_stock: "All items in your cart are currently out of stock. Order cancelled.",
+        scan_pay: "💳 *Scan QR Code to Pay*",
+        order_id: "Order ID",
+        amount: "Amount",
+        scan_exp: "⏳ Please complete payment within 10 minutes.",
+        check_status: "🔄 Check Payment Status",
+        cancel_order_btn: "❌ Cancel Order",
+        receipt_title: "🧾 *Order Receipt - {orderId}*\nKeep this for your records.",
+        checkout_failed: "❌ Failed to process checkout: {error}. Please try again later.",
+        order_not_found: "Order not found.",
+        status_already: "Order status is already: {status}",
+        payment_success: "🎉 *Payment Successful!*\nYour order `{orderId}` has been confirmed successfully.\n📦 *Status:* Pending (Paid)",
+        payment_verified: "Payment verified successfully!",
+        payment_pending: "⏳ Payment not found or still pending. Please scan the QR code and complete payment first.",
+        api_error: "⚠️ API Error verifying payment. Please try again later.",
+        order_cancelled: "❌ Order {orderId} cancelled.",
+        order_cannot_cancel: "This order cannot be cancelled as it is already paid or processed.",
+        search_prompt: "Please enter the product name you are looking for:",
+        no_products_search: "No products found matching your search.",
+        search_results: "Search results for \"{query}\":",
+        no_orders: "You have no orders yet.",
+        orders_title: "*📦 Your Orders:*\n\n",
+        deleted_product: "Deleted Product",
+        order_details_id: "Order ID",
+        order_details_products: "Products",
+        order_details_total: "Total",
+        order_details_status: "Status",
+        order_details_date: "Date"
+    },
+    km: {
+        welcome: "សូមស្វាគមន៍មកកាន់ហាងទំនិញរបស់យើង! 🏪\nសូមជ្រើសរើសជម្រើសខាងក្រោម៖\n(ផ្ញើ /adminsecret ដើម្បីក្លាយជា Admin សម្រាប់ការសាកល្បង)",
+        menu_shop: "🛍️ ទិញទំនិញ",
+        menu_search: "🔎 ស្វែងរក",
+        menu_cart: "🛒 រទេះរបស់ខ្ញុំ",
+        menu_orders: "📦 ការបញ្ជាទិញរបស់ខ្ញុំ",
+        menu_lang: "🌐 Language / ភាសា",
+        select_lang: "សូមជ្រើសរើសភាសាដែលអ្នកពេញចិត្ត៖",
+        lang_updated: "ភាសាត្រូវបានផ្លាស់ប្តូរទៅជាភាសាខ្មែរ! 🇰🇭",
+        no_categories: "មិនមានទំនិញនៅពេលនេះទេ។",
+        select_category: "ជ្រើសរើសប្រភេទ៖",
+        no_products_cat: "មិនមានទំនិញនៅក្នុងប្រភេទនេះទេ។",
+        showing_products: "កំពុងបង្ហាញទំនិញនៅក្នុងប្រភេទ *{category}*៖",
+        add_to_cart: "ដាក់ក្នុងរទេះ 🛒",
+        view_details: "មើលព័ត៌មានលម្អិត ℹ️",
+        back_categories: "⬅️ ត្រឡប់ទៅប្រភេទ",
+        product_not_found: "រកមិនឃើញទំនិញឡើយ។",
+        price: "តម្លៃ",
+        stock: "ស្តុក",
+        out_of_stock: "អស់ពីស្តុក",
+        no_description: "គ្មានការពិពណ៌នា",
+        empty_cart: "រទេះរបស់អ្នកគឺទទេរ។ 🛒",
+        cart_title: "*🛒 រទេះរបស់អ្នក:*\n\n",
+        qty: "ចំនួន",
+        remove: "❌ លុបចេញ",
+        total_price: "តម្លៃសរុប",
+        checkout: "💳 ទូទាត់ប្រាក់",
+        clear_cart: "🗑️ សំអាតរទេះ",
+        cart_cleared: "បានសំអាតរទេះរួចរាល់។",
+        back_cart: "⬅️ ត្រឡប់ទៅរទេះវិញ",
+        enter_phone: "📱 សូមបញ្ចូលលេខទូរស័ព្ទរបស់អ្នក៖",
+        invalid_phone: "⚠️ លេខទូរស័ព្ទមិនត្រឹមត្រូវឡើយ។ សូមបញ្ចូលតែលេខ (ពី ៩ ទៅ ១២ ខ្ទង់)៖",
+        back_phone: "⬅️ ត្រឡប់ទៅលេខទូរស័ព្ទ",
+        enter_address: "🏠 សូមបញ្ចូលអាសយដ្ឋានដឹកជញ្ជូនរបស់អ្នក៖",
+        address_required: "⚠️ អាសយដ្ឋានគឺចាំបាច់ត្រូវមាន។ សូមបញ្ចូលអាសយដ្ឋានដឹកជញ្ជូនរបស់អ្នក៖",
+        order_summary: "🧾 *សេចក្តីសង្ខេបនៃការបញ្ជាទិញ*",
+        summary_phone: "ទូរស័ព្ទ",
+        summary_address: "អាសយដ្ឋាន",
+        summary_items: "ទំនិញ",
+        summary_total: "សរុប",
+        pay_now_btn: "💳 ទូទាត់ឥឡូវនេះ",
+        cancel_btn: "❌ បោះបង់",
+        no_active_order: "រកមិនឃើញការបញ្ជាក់ការបញ្ជាទិញសកម្មឡើយ។",
+        empty_cart_proceed: "រទេះរបស់អ្នកគឺទទេ។ មិនអាចបន្តដំណើរការបានទេ។",
+        items_out_of_stock: "ទំនិញទាំងអស់នៅក្នុងរទេះរបស់អ្នកត្រូវបានអស់ពីស្តុក។ ការបញ្ជាទិញត្រូវបានបោះបង់។",
+        scan_pay: "💳 *ស្កែនកូដ QR ដើម្បីទូទាត់ប្រាក់*",
+        order_id: "លេខសំគាល់ការបញ្ជាទិញ",
+        amount: "ចំនួនទឹកប្រាក់",
+        scan_exp: "⏳ សូមបញ្ចប់ការទូទាត់ក្នុងរយៈពេល ១០ នាទី។",
+        check_status: "🔄 ពិនិត្យស្ថានភាពទូទាត់",
+        cancel_order_btn: "❌ បោះបង់ការបញ្ជាទិញ",
+        receipt_title: "🧾 *វិក្កយបត្របញ្ជាទិញ - {orderId}*\nរក្សាទុកវាសម្រាប់កំណត់ត្រារបស់អ្នក។",
+        checkout_failed: "❌ ការទូទាត់បរាជ័យ៖ {error}។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។",
+        order_not_found: "រកមិនឃើញការបញ្ជាទិញឡើយ។",
+        status_already: "ស្ថានភាពនៃការបញ្ជាទិញគឺរួចហើយ៖ {status}",
+        payment_success: "🎉 *ការទូទាត់ជោគជ័យ!*\nការបញ្ជាទិញរបស់អ្នក `{orderId}` ត្រូវបានបញ្ជាក់រួចរាល់។\n📦 *ស្ថានភាព:* កំពុងរង់ចាំ (បង់ប្រាក់រួច)",
+        payment_verified: "ការទូទាត់ត្រូវបានផ្ទៀងផ្ទាត់ដោយជោគជ័យ!",
+        payment_pending: "⏳ មិនទាន់រកឃើញការទូទាត់ ឬកំពុងរង់ចាំ។ សូមស្កែនកូដ QR ហើយបញ្ចប់ការទូទាត់ជាមុនសិន។",
+        api_error: "⚠️ កំហុស API ក្នុងការផ្ទៀងផ្ទាត់ការទូទាត់។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។",
+        order_cancelled: "❌ ការបញ្ជាទិញ {orderId} ត្រូវបានបោះបង់។",
+        order_cannot_cancel: "ការបញ្ជាទិញនេះមិនអាចបោះបង់បានទេ ព្រោះវាត្រូវបានបង់ប្រាក់ ឬដំណើរការរួចហើយ។",
+        search_prompt: "សូមបញ្ចូលឈ្មោះទំនិញដែលអ្នកកំពុងស្វែងរក៖",
+        no_products_search: "រកមិនឃើញទំនិញដែលត្រូវនឹងការស្វែងរករបស់អ្នកទេ។",
+        search_results: "លទ្ធផលស្វែងរកសម្រាប់ \"{query}\"៖",
+        no_orders: "អ្នកមិនទាន់មានការបញ្ជាទិញនៅឡើយទេ។",
+        orders_title: "*📦 ការបញ្ជាទិញរបស់អ្នក:*\n\n",
+        deleted_product: "ផលិតផលត្រូវបានលុប",
+        order_details_id: "លេខសំគាល់ការបញ្ជាទិញ",
+        order_details_products: "ផលិតផល",
+        order_details_total: "សរុប",
+        order_details_status: "ស្ថានភាព",
+        order_details_date: "កាលបរិច្ឆេទ"
+    }
+};
+
+function getMainMenu(lang) {
+    const t = translations[lang] || translations.en;
+    return Markup.keyboard([
+        [t.menu_shop, t.menu_search],
+        [t.menu_cart, t.menu_orders],
+        [t.menu_lang]
+    ]).resize();
+}
+
 // Helper function to get or create user
 async function getUser(ctx) {
     const tgUser = ctx.from;
@@ -91,6 +250,7 @@ async function getUser(ctx) {
             firstName: tgUser.first_name,
             lastName: tgUser.last_name,
             username: tgUser.username,
+            language: tgUser.language_code === 'km' ? 'km' : 'en',
             isAdmin: false
         });
         await user.save();
@@ -98,17 +258,13 @@ async function getUser(ctx) {
     return user;
 }
 
-// Main Menu
-const mainMenu = Markup.keyboard([
-    ['🛍️ Shop Products', '🔎 Search'],
-    ['🛒 My Cart', '📦 My Orders']
-]).resize();
-
 bot.start(async (ctx) => {
-    await getUser(ctx);
+    const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
     ctx.session = ctx.session || {};
     ctx.session.state = null;
-    await ctx.reply('Welcome to our E-commerce Store! 🏪\nPlease choose an option below:\n(P.S. Send /adminsecret to become an admin for testing)', mainMenu);
+    await ctx.reply(t.welcome, getMainMenu(lang));
 });
 
 bot.command('adminsecret', async (ctx) => {
@@ -118,15 +274,50 @@ bot.command('adminsecret', async (ctx) => {
     return ctx.reply('You are now an Admin! ⚙️ Click "⚙️ Admin Panel" from the main menu.');
 });
 
+// --- LANGUAGE TOGGLE HANDLER ---
+bot.hears(['🌐 Language / ភាសា'], async (ctx) => {
+    const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
+    
+    await ctx.reply(t.select_lang, Markup.inlineKeyboard([
+        [
+            Markup.button.callback('🇺🇸 English', 'set_lang_en'),
+            Markup.button.callback('🇰🇭 ភាសាខ្មែរ', 'set_lang_km')
+        ]
+    ]));
+});
+
+bot.action('set_lang_en', async (ctx) => {
+    const user = await getUser(ctx);
+    user.language = 'en';
+    await user.save();
+    const t = translations.en;
+    await ctx.reply(t.lang_updated, getMainMenu('en'));
+    await ctx.answerCbQuery();
+});
+
+bot.action('set_lang_km', async (ctx) => {
+    const user = await getUser(ctx);
+    user.language = 'km';
+    await user.save();
+    const t = translations.km;
+    await ctx.reply(t.lang_updated, getMainMenu('km'));
+    await ctx.answerCbQuery();
+});
+
 // --- SHOP PRODUCTS & CATEGORIES ---
-// --- SHOP PRODUCTS & CATEGORIES ---
-bot.hears('🛍️ Shop Products', async (ctx) => {
+bot.hears(['🛍️ Shop Products', '🛍️ ទិញទំនិញ'], async (ctx) => {
+    const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
+    
     const categories = await Product.distinct('category');
     if (categories.length === 0) {
-        return ctx.reply('No products available at the moment.');
+        return ctx.reply(t.no_categories);
     }
     const buttons = categories.map(cat => [Markup.button.callback(cat, `cat_${cat}`)]);
-    await ctx.reply('Select a category:', Markup.inlineKeyboard(buttons));
+    await ctx.reply(t.select_category, Markup.inlineKeyboard(buttons));
 });
 
 bot.action(/cat_(.+)/, async (ctx) => {
@@ -134,19 +325,23 @@ bot.action(/cat_(.+)/, async (ctx) => {
     // Prevent matching 'manage' or other admin callbacks
     if (category.startsWith('manage') || category.startsWith('view_order')) return;
 
+    const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
+
     const products = await Product.find({ category });
     if (products.length === 0) {
-        return ctx.reply('No products in this category.');
+        return ctx.reply(t.no_products_cat);
     }
 
-    await ctx.reply(`Showing products in *${category}*:`, { parse_mode: 'Markdown' });
+    await ctx.reply(t.showing_products.replace('{category}', category), { parse_mode: 'Markdown' });
 
     for (const p of products) {
-        const message = `🛍️ *${p.name}*\n💰 Price: $${p.price}`;
+        const message = `🛍️ *${p.name}*\n💰 ${t.price}: $${p.price}`;
         const keyboard = Markup.inlineKeyboard([
             [
-                Markup.button.callback('Add to Cart 🛒', `add_${p._id}`),
-                Markup.button.callback('View Details ℹ️', `prod_${p._id}`)
+                Markup.button.callback(t.add_to_cart, `add_${p._id}`),
+                Markup.button.callback(t.view_details, `prod_${p._id}`)
             ]
         ]);
 
@@ -158,7 +353,7 @@ bot.action(/cat_(.+)/, async (ctx) => {
                     ...keyboard
                 });
             } catch (err) {
-                await ctx.replyWithMarkdown(message + '\n\n⚠️ (Image failed to load)', keyboard);
+                await ctx.replyWithMarkdown(message + `\n\n⚠️ (${lang === 'km' ? 'រូបភាពមិនអាចទាញយកបានទេ' : 'Image failed to load'})`, keyboard);
             }
         } else {
             await ctx.replyWithMarkdown(message, keyboard);
@@ -172,16 +367,20 @@ bot.action(/prod_(.+)/, async (ctx) => {
     // Prevent matching 'manage' or other admin callbacks
     if (productId.startsWith('manage') || productId.startsWith('view_order')) return;
 
-    const product = await Product.findById(productId);
-    if (!product) return ctx.reply('Product not found.');
+    const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
 
-    const message = `📦 *${product.name}*\n\n📝 ${product.description || 'No description'}\n\n💰 Price: $${product.price}\n📊 Stock: ${product.stock > 0 ? product.stock : 'Out of stock'}`;
+    const product = await Product.findById(productId);
+    if (!product) return ctx.reply(t.product_not_found);
+
+    const message = `📦 *${product.name}*\n\n📝 ${product.description || t.no_description}\n\n💰 ${t.price}: $${product.price}\n📊 ${t.stock}: ${product.stock > 0 ? product.stock : t.out_of_stock}`;
     
     const buttons = [];
     if (product.stock > 0) {
-        buttons.push([Markup.button.callback('Add to Cart 🛒', `add_${product._id}`)]);
+        buttons.push([Markup.button.callback(t.add_to_cart, `add_${product._id}`)]);
     }
-    buttons.push([Markup.button.callback('⬅️ Back to Categories', 'back_cats')]);
+    buttons.push([Markup.button.callback(t.back_categories, 'back_cats')]);
 
     const keyboard = Markup.inlineKeyboard(buttons);
 
@@ -193,7 +392,7 @@ bot.action(/prod_(.+)/, async (ctx) => {
                 ...keyboard
             });
         } catch (err) {
-            await ctx.replyWithMarkdown(message + '\n\n⚠️ (Image failed to load)', keyboard);
+            await ctx.replyWithMarkdown(message + `\n\n⚠️ (${lang === 'km' ? 'រូបភាពមិនអាចទាញយកបានទេ' : 'Image failed to load'})`, keyboard);
         }
     } else {
         await ctx.replyWithMarkdown(message, keyboard);
@@ -202,19 +401,25 @@ bot.action(/prod_(.+)/, async (ctx) => {
 });
 
 bot.action('back_cats', async (ctx) => {
+    const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
+
     const categories = await Product.distinct('category');
     const buttons = categories.map(cat => [Markup.button.callback(cat, `cat_${cat}`)]);
-    await ctx.reply('Select a category:', Markup.inlineKeyboard(buttons));
+    await ctx.reply(t.select_category, Markup.inlineKeyboard(buttons));
     await ctx.answerCbQuery();
 });
 
 // --- CART SYSTEM HELPERS & HANDLERS ---
 async function viewCart(ctx) {
     const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
     const cart = await Cart.findOne({ user: user._id }).populate('items.product');
 
     if (!cart || cart.items.length === 0) {
-        const emptyMsg = 'Your cart is empty. 🛒';
+        const emptyMsg = t.empty_cart;
         if (ctx.callbackQuery) {
             try {
                 await ctx.editMessageText(emptyMsg);
@@ -227,7 +432,7 @@ async function viewCart(ctx) {
         return;
     }
 
-    let message = '*🛒 Your Cart:*\n\n';
+    let message = t.cart_title;
     let total = 0;
     const buttons = [];
 
@@ -235,22 +440,22 @@ async function viewCart(ctx) {
         if (!item.product) return;
         const itemTotal = item.product.price * item.quantity;
         total += itemTotal;
-        message += `📦 *${item.product.name}*\n   Price: $${item.product.price} | Qty: ${item.quantity}\n   Subtotal: $${itemTotal}\n\n`;
+        message += `📦 *${item.product.name}*\n   ${t.price}: $${item.product.price} | ${t.qty}: ${item.quantity}\n   Subtotal: $${itemTotal}\n\n`;
         
         buttons.push([
             Markup.button.callback(`➖`, `dec_${item.product._id}`),
-            Markup.button.callback(`Qty: ${item.quantity}`, `noop`),
+            Markup.button.callback(`${t.qty}: ${item.quantity}`, `noop`),
             Markup.button.callback(`➕`, `inc_${item.product._id}`),
-            Markup.button.callback(`❌ Remove`, `rm_${item.product._id}`)
+            Markup.button.callback(t.remove, `rm_${item.product._id}`)
         ]);
     });
 
-    message += `*Total Price: $${total}*`;
+    message += `*${t.total_price}: $${total}*`;
     
     if (total > 0) {
         buttons.push([
-            Markup.button.callback('💳 Checkout', 'checkout'),
-            Markup.button.callback('🗑️ Clear Cart', 'clear_cart')
+            Markup.button.callback(t.checkout, 'checkout'),
+            Markup.button.callback(t.clear_cart, 'clear_cart')
         ]);
     }
 
@@ -275,10 +480,12 @@ bot.action(/add_(.+)/, async (ctx) => {
     if (productId.startsWith('manage') || productId.startsWith('view_order')) return;
 
     const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
     const product = await Product.findById(productId);
     
     if (!product || product.stock <= 0) {
-        return ctx.answerCbQuery('Out of stock or not found.', { show_alert: true });
+        return ctx.answerCbQuery(lang === 'km' ? 'អស់ពីស្តុក ឬរកមិនឃើញផលិតផល។' : 'Out of stock or not found.', { show_alert: true });
     }
 
     let cart = await Cart.findOne({ user: user._id });
@@ -294,28 +501,31 @@ bot.action(/add_(.+)/, async (ctx) => {
     }
 
     await cart.save();
-    await ctx.answerCbQuery(`${product.name} added to cart!`);
-    await ctx.reply(`🛒 Added *${product.name}* to your cart!`, {
+    
+    const addedMsg = lang === 'km' ? `បានដាក់ ${product.name} ទៅក្នុងរទេះ!` : `${product.name} added to cart!`;
+    await ctx.answerCbQuery(addedMsg);
+    await ctx.reply(`🛒 ${lang === 'km' ? `បានដាក់ចូលក្នុងរទេះ៖` : 'Added'} *${product.name}* ${lang === 'km' ? 'រួចរាល់!' : 'to your cart!'}`, {
         parse_mode: 'Markdown',
         ...Markup.inlineKeyboard([
-            [Markup.button.callback('🛒 View Cart', 'show_cart')]
+            [Markup.button.callback(t.menu_cart, 'show_cart')]
         ])
     });
 });
 
-bot.hears('🛒 My Cart', async (ctx) => {
+bot.hears(['🛒 My Cart', '🛒 រទេះរបស់ខ្ញុំ'], async (ctx) => {
     await viewCart(ctx);
 });
 
 bot.action(/rm_(.+)/, async (ctx) => {
     const productId = ctx.match[1];
     const user = await getUser(ctx);
+    const lang = user.language || 'en';
     const cart = await Cart.findOne({ user: user._id });
 
     if (cart) {
         cart.items = cart.items.filter(item => item.product && item.product.toString() !== productId);
         await cart.save();
-        await ctx.answerCbQuery('Item removed.');
+        await ctx.answerCbQuery(lang === 'km' ? 'បានលុបទំនិញ។' : 'Item removed.');
         await viewCart(ctx);
     }
 });
@@ -323,62 +533,72 @@ bot.action(/rm_(.+)/, async (ctx) => {
 bot.action(/dec_(.+)/, async (ctx) => {
     const productId = ctx.match[1];
     const user = await getUser(ctx);
+    const lang = user.language || 'en';
     const cart = await Cart.findOne({ user: user._id });
-    if (!cart) return ctx.answerCbQuery('Cart is empty.');
+    if (!cart) return ctx.answerCbQuery(lang === 'km' ? 'រទេះគឺទទេរ។' : 'Cart is empty.');
 
     const itemIndex = cart.items.findIndex(item => item.product && item.product.toString() === productId);
     if (itemIndex > -1) {
         if (cart.items[itemIndex].quantity > 1) {
             cart.items[itemIndex].quantity -= 1;
             await cart.save();
-            await ctx.answerCbQuery('Quantity decreased.');
+            await ctx.answerCbQuery(lang === 'km' ? 'បានកាត់បន្ថយចំនួន។' : 'Quantity decreased.');
         } else {
             cart.items = cart.items.filter(item => item.product && item.product.toString() !== productId);
             await cart.save();
-            await ctx.answerCbQuery('Item removed from cart.');
+            await ctx.answerCbQuery(lang === 'km' ? 'បានលុបទំនិញពីរទេះ។' : 'Item removed from cart.');
         }
         await viewCart(ctx);
     } else {
-        await ctx.answerCbQuery('Item not found in cart.');
+        await ctx.answerCbQuery(lang === 'km' ? 'រកមិនឃើញទំនិញក្នុងរទេះឡើយ។' : 'Item not found in cart.');
     }
 });
 
 bot.action(/inc_(.+)/, async (ctx) => {
     const productId = ctx.match[1];
     const user = await getUser(ctx);
+    const lang = user.language || 'en';
     const product = await Product.findById(productId);
-    if (!product) return ctx.answerCbQuery('Product not found.');
+    if (!product) return ctx.answerCbQuery(lang === 'km' ? 'រកមិនឃើញផលិតផលឡើយ។' : 'Product not found.');
 
     const cart = await Cart.findOne({ user: user._id });
-    if (!cart) return ctx.answerCbQuery('Cart is empty.');
+    if (!cart) return ctx.answerCbQuery(lang === 'km' ? 'រទេះគឺទទេរ។' : 'Cart is empty.');
 
     const itemIndex = cart.items.findIndex(item => item.product && item.product.toString() === productId);
     if (itemIndex > -1) {
         if (product.stock > cart.items[itemIndex].quantity) {
             cart.items[itemIndex].quantity += 1;
             await cart.save();
-            await ctx.answerCbQuery('Quantity increased.');
+            await ctx.answerCbQuery(lang === 'km' ? 'បានបង្កើនចំនួន។' : 'Quantity increased.');
         } else {
-            await ctx.answerCbQuery(`Cannot add more. Only ${product.stock} items left in stock.`, { show_alert: true });
+            const stockMsg = lang === 'km' 
+                ? `មិនអាចបន្ថែមបានទៀតទេ។ សល់ត្រឹមតែ ${product.stock} គ្រឿងក្នុងស្តុក។` 
+                : `Cannot add more. Only ${product.stock} items left in stock.`;
+            await ctx.answerCbQuery(stockMsg, { show_alert: true });
         }
         await viewCart(ctx);
     } else {
-        await ctx.answerCbQuery('Item not found in cart.');
+        await ctx.answerCbQuery(lang === 'km' ? 'រកមិនឃើញទំនិញក្នុងរទេះឡើយ។' : 'Item not found in cart.');
     }
 });
 
 bot.action('clear_cart', async (ctx) => {
     const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
     await Cart.findOneAndUpdate({ user: user._id }, { items: [] });
-    await ctx.answerCbQuery('Cart cleared.', { show_alert: true });
+    await ctx.answerCbQuery(t.cart_cleared, { show_alert: true });
     await viewCart(ctx);
 });
 
 bot.action('checkout', async (ctx) => {
+    const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
     ctx.session = ctx.session || {};
     ctx.session.state = 'checkout_phone';
-    await ctx.reply('📱 Please enter your phone number:', Markup.inlineKeyboard([
-        [Markup.button.callback('⬅️ Back to Cart', 'show_cart')]
+    await ctx.reply(t.enter_phone, Markup.inlineKeyboard([
+        [Markup.button.callback(t.back_cart, 'show_cart')]
     ]));
     await ctx.answerCbQuery();
 });
@@ -392,15 +612,18 @@ bot.action('show_cart', async (ctx) => {
 
 bot.action('pay_now', async (ctx) => {
     ctx.session = ctx.session || {};
+    const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
+
     if (ctx.session.state !== 'checkout_confirm' || !ctx.session.checkoutData) {
-        return ctx.reply('No active order confirmation found.', mainMenu);
+        return ctx.reply(t.no_active_order, getMainMenu(lang));
     }
 
-    const user = await getUser(ctx);
     const cart = await Cart.findOne({ user: user._id }).populate('items.product');
     if (!cart || cart.items.length === 0) {
         ctx.session.state = null;
-        return ctx.reply('Your cart is empty. Cannot proceed.', mainMenu);
+        return ctx.reply(t.empty_cart_proceed, getMainMenu(lang));
     }
 
     // Double check stock and deduct
@@ -422,7 +645,7 @@ bot.action('pay_now', async (ctx) => {
     if (orderItems.length === 0) {
         ctx.session.state = null;
         ctx.session.checkoutData = null;
-        return ctx.reply('All items in your cart are currently out of stock. Order cancelled.', mainMenu);
+        return ctx.reply(t.items_out_of_stock, getMainMenu(lang));
     }
 
     // Generate custom Order ID: ORD-2026-0001
@@ -489,19 +712,19 @@ bot.action('pay_now', async (ctx) => {
         // Generate QR Image Buffer
         const qrBuffer = await QRCode.toBuffer(qrText, { margin: 2, scale: 6 });
 
-        const msg = `💳 *Scan QR Code to Pay*
+        const msg = `${t.scan_pay}
 
-🆔 *Order ID:* \`${customOrderId}\`
-💰 *Amount:* $${total.toFixed(2)}
+🆔 *${t.order_id}:* \`${customOrderId}\`
+💰 *${t.amount}:* $${total.toFixed(2)}
 
-⏳ Please complete payment within 10 minutes.`;
+${t.scan_exp}`;
 
         await ctx.replyWithPhoto({ source: qrBuffer }, {
             caption: msg,
             parse_mode: 'Markdown',
             ...Markup.inlineKeyboard([
-                [Markup.button.callback('🔄 Check Payment Status', `check_payment_${customOrderId}`)],
-                [Markup.button.callback('❌ Cancel Order', `cancel_payment_${customOrderId}`)]
+                [Markup.button.callback(t.check_status, `check_payment_${customOrderId}`)],
+                [Markup.button.callback(t.cancel_order_btn, `cancel_payment_${customOrderId}`)]
             ])
         });
 
@@ -526,12 +749,13 @@ bot.action('pay_now', async (ctx) => {
                 status: 'pending_payment',
                 paymentStatus: 'pending',
                 qrBuffer,
-                createdAt: new Date()
+                createdAt: new Date(),
+                lang: lang
             });
 
             await ctx.replyWithPhoto(
                 { source: receiptBuffer },
-                { caption: `🧾 *Order Receipt - ${customOrderId}*\nKeep this for your records.`, parse_mode: 'Markdown' }
+                { caption: t.receipt_title.replace('{orderId}', customOrderId), parse_mode: 'Markdown' }
             );
         } catch (receiptErr) {
             console.error('Failed to generate receipt image:', receiptErr);
@@ -545,18 +769,22 @@ bot.action('pay_now', async (ctx) => {
             await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
         }
         console.error('Failed to process KHQR checkout:', err);
-        await ctx.reply(`❌ Failed to process checkout: ${err.message}. Please try again later.`, mainMenu);
+        await ctx.reply(t.checkout_failed.replace('{error}', err.message), getMainMenu(lang));
         await ctx.answerCbQuery();
     }
 });
 
 bot.action(/check_payment_(.+)/, async (ctx) => {
     const orderId = ctx.match[1];
+    const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
+
     const order = await Order.findOne({ orderId }).populate('user');
-    if (!order) return ctx.answerCbQuery('Order not found.', { show_alert: true });
+    if (!order) return ctx.answerCbQuery(t.order_not_found, { show_alert: true });
 
     if (order.status !== 'pending_payment') {
-        return ctx.answerCbQuery(`Order status is already: ${order.status.toUpperCase()}`, { show_alert: true });
+        return ctx.answerCbQuery(t.status_already.replace('{status}', order.status.toUpperCase()), { show_alert: true });
     }
 
     const axios = require('axios');
@@ -575,25 +803,29 @@ bot.action(/check_payment_(.+)/, async (ctx) => {
             order.paymentStatus = 'paid';
             await order.save();
 
-            await ctx.replyWithMarkdown(`🎉 *Payment Successful!*\nYour order \`${order.orderId}\` is confirmed. Status: *PENDING*`, mainMenu);
-            await ctx.answerCbQuery('Payment verified successfully!', { show_alert: true });
+            await ctx.replyWithMarkdown(t.payment_success.replace('{orderId}', order.orderId), getMainMenu(lang));
+            await ctx.answerCbQuery(t.payment_verified, { show_alert: true });
             
             try {
                 await ctx.deleteMessage();
             } catch (e) {}
         } else {
-            await ctx.answerCbQuery('⏳ Payment not found or still pending. Please scan the QR code and complete payment first.', { show_alert: true });
+            await ctx.answerCbQuery(t.payment_pending, { show_alert: true });
         }
     } catch (err) {
         console.error('Error verifying payment:', err.response ? err.response.data : err.message);
-        await ctx.answerCbQuery('⚠️ API Error verifying payment. Please try again later.', { show_alert: true });
+        await ctx.answerCbQuery(t.api_error, { show_alert: true });
     }
 });
 
 bot.action(/cancel_payment_(.+)/, async (ctx) => {
     const orderId = ctx.match[1];
+    const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
+
     const order = await Order.findOne({ orderId });
-    if (!order) return ctx.answerCbQuery('Order not found.');
+    if (!order) return ctx.answerCbQuery(t.order_not_found);
 
     if (order.status === 'pending_payment') {
         // Restore stock
@@ -602,48 +834,56 @@ bot.action(/cancel_payment_(.+)/, async (ctx) => {
         }
         order.status = 'cancelled';
         await order.save();
-        await ctx.reply(`❌ Order ${order.orderId} cancelled.`, mainMenu);
+        await ctx.reply(t.order_cancelled.replace('{orderId}', order.orderId), getMainMenu(lang));
         try {
             await ctx.deleteMessage();
         } catch (e) {}
     } else {
-        await ctx.reply('This order cannot be cancelled as it is already paid or processed.');
+        await ctx.reply(t.order_cannot_cancel);
     }
     await ctx.answerCbQuery();
 });
 
 bot.action('cancel_order', async (ctx) => {
+    const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
     ctx.session = ctx.session || {};
     ctx.session.state = null;
     ctx.session.checkoutData = null;
-    await ctx.reply('❌ Order cancelled.', mainMenu);
+    await ctx.reply(lang === 'km' ? '❌ ការបញ្ជាទិញត្រូវបានបោះបង់។' : '❌ Order cancelled.', getMainMenu(lang));
     await ctx.answerCbQuery();
 });
 
 // --- SEARCH ---
-bot.hears('🔎 Search', async (ctx) => {
+bot.hears(['🔎 Search', '🔎 ស្វែងរក'], async (ctx) => {
+    const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
     ctx.session = ctx.session || {};
     ctx.session.state = 'search';
-    await ctx.reply('Please enter the product name you are looking for:');
+    await ctx.reply(t.search_prompt);
 });
 
 // --- ORDERS ---
-bot.hears('📦 My Orders', async (ctx) => {
+bot.hears(['📦 My Orders', '📦 ការបញ្ជាទិញរបស់ខ្ញុំ'], async (ctx) => {
     const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
     const orders = await Order.find({ user: user._id }).populate('items.product').sort({ createdAt: -1 });
 
     if (orders.length === 0) {
-        return ctx.reply('You have no orders yet.');
+        return ctx.reply(t.no_orders);
     }
 
-    let msg = '*📦 Your Orders:*\n\n';
+    let msg = t.orders_title;
     for (let o of orders) {
         let itemList = '';
         o.items.forEach((item, index) => {
-            const prodName = item.product ? item.product.name : 'Deleted Product';
+            const prodName = item.product ? item.product.name : t.deleted_product;
             itemList += `  • ${prodName} (x${item.quantity}) - $${item.price * item.quantity}\n`;
         });
-        msg += `🆔 *Order ID:* \`${o.orderId || o._id}\`\n📋 *Products:*\n${itemList}💰 *Total:* $${o.totalPrice}\n⚡ *Status:* ${o.status.toUpperCase()}\n📅 *Date:* ${o.createdAt.toDateString()}\n───────────────────\n\n`;
+        msg += `🆔 *${t.order_details_id}:* \`${o.orderId || o._id}\`\n📋 *${t.order_details_products}:*\n${itemList}💰 *${t.order_details_total}:* $${o.totalPrice}\n⚡ *${t.order_details_status}:* ${o.status.toUpperCase()}\n📅 *${t.order_details_date}:* ${o.createdAt.toDateString()}\n───────────────────\n\n`;
     }
 
     await ctx.replyWithMarkdown(msg);
@@ -763,9 +1003,11 @@ bot.action(/admin_edit_stock_(.+)/, async (ctx) => {
 
 bot.action(/admin_delete_prod_(.+)/, async (ctx) => {
     const productId = ctx.match[1];
+    const user = await getUser(ctx);
+    const lang = user.language || 'en';
     const product = await Product.findByIdAndDelete(productId);
     if (product) {
-        await ctx.reply(`✅ Product "${product.name}" deleted successfully.`, mainMenu);
+        await ctx.reply(`✅ Product "${product.name}" deleted successfully.`, getMainMenu(lang));
     } else {
         await ctx.reply('Product not found.');
     }
@@ -841,19 +1083,26 @@ bot.action(/admin_status_(.+)_(pending|shipping|completed)/, async (ctx) => {
     await order.save();
 
     await ctx.answerCbQuery(`Order status updated to ${newStatus}!`);
-    await ctx.reply(`Order status updated to *${newStatus.toUpperCase()}*`, mainMenu);
+    await ctx.reply(`Order status updated to *${newStatus.toUpperCase()}*`);
 
     // Notify customer
     try {
         const user = await User.findById(order.user);
         if (user) {
+            const lang = user.language || 'en';
             let notification = '';
             if (newStatus === 'pending' && oldStatus === 'pending_payment') {
-                notification = `🎉 *Payment Successful!*\nYour order \`${order.orderId}\` has been confirmed.`;
+                notification = lang === 'km' 
+                    ? `🎉 *ការទូទាត់ជោគជ័យ!*\nការបញ្ជាទិញរបស់អ្នក \`${order.orderId}\` ត្រូវបានបញ្ជាក់។`
+                    : `🎉 *Payment Successful!*\nYour order \`${order.orderId}\` has been confirmed.`;
             } else if (newStatus === 'shipping') {
-                notification = `🚚 Your order \`${order.orderId}\` has been shipped!`;
+                notification = lang === 'km'
+                    ? `🚚 ការបញ្ជាទិញរបស់អ្នក \`${order.orderId}\` ត្រូវបានដឹកជញ្ជូនហើយ!`
+                    : `🚚 Your order \`${order.orderId}\` has been shipped!`;
             } else if (newStatus === 'completed') {
-                notification = `✅ Your order \`${order.orderId}\` is completed! Thank you for shopping with us.`;
+                notification = lang === 'km'
+                    ? `✅ ការបញ្ជាទិញរបស់អ្នក \`${order.orderId}\` ត្រូវបានបញ្ចប់! សូមអរគុណសម្រាប់ការទិញទំនិញជាមួយយើង។`
+                    : `✅ Your order \`${order.orderId}\` is completed! Thank you for shopping with us.`;
             }
             if (notification) {
                 await bot.telegram.sendMessage(user.telegramId, notification, { parse_mode: 'Markdown' });
@@ -867,6 +1116,7 @@ bot.action(/admin_status_(.+)_(pending|shipping|completed)/, async (ctx) => {
 // --- GENERAL PHOTO HANDLER (FOR PRODUCT IMAGES) ---
 bot.on('photo', async (ctx) => {
     const user = await getUser(ctx);
+    const lang = user.language || 'en';
     ctx.session = ctx.session || {};
     const state = ctx.session.state;
 
@@ -879,13 +1129,15 @@ bot.on('photo', async (ctx) => {
         await prod.save();
         ctx.session.state = null;
         ctx.session.newProduct = null;
-        return ctx.reply(`✅ Product "${prod.name}" added successfully with image!`, mainMenu);
+        return ctx.reply(`✅ Product "${prod.name}" added successfully with image!`, getMainMenu(lang));
     }
 });
 
 // --- GENERAL TEXT HANDLER (FOR STATES) ---
 bot.on('text', async (ctx) => {
     const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
     ctx.session = ctx.session || {};
     const state = ctx.session.state;
 
@@ -896,11 +1148,11 @@ bot.on('text', async (ctx) => {
         ctx.session.state = null;
 
         if (products.length === 0) {
-            return ctx.reply('No products found matching your search.', mainMenu);
+            return ctx.reply(t.no_products_search, getMainMenu(lang));
         }
 
         const buttons = products.map(p => [Markup.button.callback(`${p.name} - $${p.price}`, `prod_${p._id}`)]);
-        return ctx.reply(`Search results for "${query}":`, Markup.inlineKeyboard(buttons));
+        return ctx.reply(t.search_results.replace('{query}', query), Markup.inlineKeyboard(buttons));
     }
 
     // Checkout Logic
@@ -909,23 +1161,23 @@ bot.on('text', async (ctx) => {
         // Validate phone: only numbers, 9-12 digits
         const phoneRegex = /^\d{9,12}$/;
         if (!phoneRegex.test(phone)) {
-            return ctx.reply('⚠️ Invalid phone number. Please enter only numbers (9 to 12 digits):', Markup.inlineKeyboard([
-                [Markup.button.callback('⬅️ Back to Cart', 'show_cart')]
+            return ctx.reply(t.invalid_phone, Markup.inlineKeyboard([
+                [Markup.button.callback(t.back_cart, 'show_cart')]
             ]));
         }
 
         ctx.session.checkoutData = { phone };
         ctx.session.state = 'checkout_address';
-        return ctx.reply('🏠 Please enter your delivery address:', Markup.inlineKeyboard([
-            [Markup.button.callback('⬅️ Back to Phone', 'checkout')]
+        return ctx.reply(t.enter_address, Markup.inlineKeyboard([
+            [Markup.button.callback(t.back_phone, 'checkout')]
         ]));
     }
 
     if (state === 'checkout_address') {
         const address = ctx.message.text.trim();
         if (!address) {
-            return ctx.reply('⚠️ Address is required. Please enter your delivery address:', Markup.inlineKeyboard([
-                [Markup.button.callback('⬅️ Back to Phone', 'checkout')]
+            return ctx.reply(t.address_required, Markup.inlineKeyboard([
+                [Markup.button.callback(t.back_phone, 'checkout')]
             ]));
         }
 
@@ -936,7 +1188,7 @@ bot.on('text', async (ctx) => {
         const cart = await Cart.findOne({ user: user._id }).populate('items.product');
         if (!cart || cart.items.length === 0) {
             ctx.session.state = null;
-            return ctx.reply('Your cart is empty. Cannot proceed to checkout.', mainMenu);
+            return ctx.reply(t.empty_cart_proceed, getMainMenu(lang));
         }
 
         let total = 0;
@@ -950,21 +1202,21 @@ bot.on('text', async (ctx) => {
 
         ctx.session.checkoutData.totalPrice = total;
 
-        const summary = `🧾 *Order Summary*
+        const summary = `${t.order_summary}
 
-📱 Phone: ${ctx.session.checkoutData.phone}
-🏠 Address: ${address}
+📱 ${t.summary_phone}: ${ctx.session.checkoutData.phone}
+🏠 ${t.summary_address}: ${address}
 
-🛒 Items:
+🛒 ${t.summary_items}:
 ${itemsList}
-💰 Total: $${total.toFixed(2)}
+💰 ${t.summary_total}: $${total.toFixed(2)}
 
-Please click the button below to complete payment:`;
+${lang === 'km' ? 'សូមចុចប៊ូតុងខាងក្រោមដើម្បីទូទាត់ប្រាក់៖' : 'Please click the button below to complete payment:'}`;
 
         return ctx.replyWithMarkdown(summary, Markup.inlineKeyboard([
             [
-                Markup.button.callback('💳 Pay Now', 'pay_now'),
-                Markup.button.callback('❌ Cancel', 'cancel_order')
+                Markup.button.callback(t.pay_now_btn, 'pay_now'),
+                Markup.button.callback(t.cancel_btn, 'cancel_order')
             ]
         ]));
     }
@@ -1015,7 +1267,7 @@ Please click the button below to complete payment:`;
             await prod.save();
             ctx.session.state = null;
             ctx.session.newProduct = null;
-            return ctx.reply(`✅ Product "${prod.name}" added successfully!`, mainMenu);
+            return ctx.reply(`✅ Product "${prod.name}" added successfully!`, getMainMenu(lang));
         }
     }
 
@@ -1028,7 +1280,7 @@ Please click the button below to complete payment:`;
         await Product.findByIdAndUpdate(ctx.session.editProductId, { price });
         ctx.session.state = null;
         ctx.session.editProductId = null;
-        return ctx.reply('✅ Product price updated successfully!', mainMenu);
+        return ctx.reply('✅ Product price updated successfully!', getMainMenu(lang));
     }
 
     if (state === 'admin_edit_stock' && user.isAdmin) {
@@ -1039,7 +1291,7 @@ Please click the button below to complete payment:`;
         await Product.findByIdAndUpdate(ctx.session.editProductId, { stock });
         ctx.session.state = null;
         ctx.session.editProductId = null;
-        return ctx.reply('✅ Product stock updated successfully!', mainMenu);
+        return ctx.reply('✅ Product stock updated successfully!', getMainMenu(lang));
     }
 });
 
@@ -1086,9 +1338,11 @@ app.post('/payment-webhook', async (req, res) => {
 
             // Notify user via Telegram Bot
             if (order.user && order.user.telegramId) {
+                const lang = order.user.language || 'en';
+                const t = translations[lang] || translations.en;
                 await bot.telegram.sendMessage(
                     order.user.telegramId, 
-                    `🎉 *Payment Successful!*\n\nYour order \`${order.orderId}\` has been confirmed successfully.\n📦 *Status:* Pending (Paid)`,
+                    t.payment_success.replace('{orderId}', order.orderId),
                     { parse_mode: 'Markdown' }
                 );
             }

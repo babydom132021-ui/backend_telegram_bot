@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
     username: String,
     phone: String,
     address: String,
+    language: { type: String, default: 'en' },
     isAdmin: { type: Boolean, default: false }
 });
 

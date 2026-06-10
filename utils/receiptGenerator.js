@@ -1,5 +1,100 @@
 const { createCanvas, loadImage } = require('canvas');
 
+const receiptTranslations = {
+    en: {
+        shopName: "MY SHOP",
+        shopSlogan: "YOUR TRUSTED STORE",
+        receiptTitle: "ORDER RECEIPT",
+        thankYouOrder: "Thank you for your order!",
+        orderId: "ORDER ID",
+        custInfo: "CUSTOMER INFORMATION",
+        custName: "Name",
+        custPhone: "Phone",
+        custAddress: "Address",
+        orderDate: "Order Date",
+        orderSummary: "ORDER SUMMARY",
+        itemCol: "ITEM",
+        qtyCol: "QTY",
+        priceCol: "PRICE",
+        totalCol: "TOTAL",
+        subtotal: "Subtotal",
+        shippingFee: "Shipping Fee",
+        total: "TOTAL",
+        paymentMethod: "PAYMENT METHOD",
+        scanToPay: "Scan to Pay",
+        scanQrComplete: "Scan the QR code",
+        scanQrComplete2: "to complete payment",
+        amountToPay: "Amount to Pay",
+        qrExpire: "⏳ QR will expire in 10 minutes.",
+        orderStatus: "ORDER STATUS",
+        status: "Status",
+        payment: "Payment",
+        statusLabels: {
+            pending_payment: "Pending Payment",
+            pending: "Confirmed",
+            shipping: "Shipped",
+            completed: "Completed"
+        },
+        paymentLabels: {
+            paid: "Paid ✅",
+            awaiting: "Awaiting Confirmation"
+        },
+        notesHeader: "NOTES",
+        note1: "• Please complete the payment within 10 minutes.",
+        note2: "• If you have any questions, please contact our support.",
+        stampLine1: "THANK YOU",
+        stampLine2: "FOR YOUR",
+        stampLine3: "ORDER",
+        thanksShopping: "THANK YOU FOR SHOPPING WITH US! ♥"
+    },
+    km: {
+        shopName: "ហាងរបស់ខ្ញុំ",
+        shopSlogan: "ហាងដែលគួរឱ្យទុកចិត្តរបស់អ្នក",
+        receiptTitle: "វិក្កយបត្របញ្ជាទិញ",
+        thankYouOrder: "សូមអរគុណសម្រាប់ការបញ្ជាទិញ!",
+        orderId: "លេខបញ្ជាទិញ",
+        custInfo: "ព័ត៌មានអតិថិជន",
+        custName: "ឈ្មោះ",
+        custPhone: "ទូរស័ព្ទ",
+        custAddress: "អាសយដ្ឋាន",
+        orderDate: "កាលបរិច្ឆេទ",
+        orderSummary: "សេចក្តីសង្ខេបការបញ្ជាទិញ",
+        itemCol: "ទំនិញ",
+        qtyCol: "ចំនួន",
+        priceCol: "តម្លៃ",
+        totalCol: "សរុប",
+        subtotal: "សរុបពាក់កណ្តាល",
+        shippingFee: "ថ្លៃដឹកជញ្ជូន",
+        total: "សរុបរួម",
+        paymentMethod: "វិធីទូទាត់ប្រាក់",
+        scanToPay: "ស្កែនដើម្បីទូទាត់",
+        scanQrComplete: "សូមស្កែនកូដ QR",
+        scanQrComplete2: "ដើម្បីបញ្ចប់ការទូទាត់",
+        amountToPay: "ប្រាក់ត្រូវទូទាត់",
+        qrExpire: "⏳ កូដ QR នឹងផុតកំណត់ក្នុងរយៈពេល ១០ នាទី។",
+        orderStatus: "ស្ថានភាពការបញ្ជាទិញ",
+        status: "ស្ថានភាព",
+        payment: "ការទូទាត់",
+        statusLabels: {
+            pending_payment: "រង់ចាំការទូទាត់",
+            pending: "បានបញ្ជាក់",
+            shipping: "កំពុងដឹកជញ្ជូន",
+            completed: "បានបញ្ចប់"
+        },
+        paymentLabels: {
+            paid: "បានបង់ប្រាក់ ✅",
+            awaiting: "រង់ចាំការបញ្ជាក់"
+        },
+        notesHeader: "កំណត់ចំណាំ",
+        note1: "• សូមបញ្ចប់ការទូទាត់ក្នុងរយៈពេល ១០ នាទី។",
+        note2: "• ប្រសិនបើមានចម្ងល់ សូមទាក់ទងមកផ្នែកគាំទ្ររបស់យើង។",
+        stampLine1: "សូមអរគុណ",
+        stampLine2: "សម្រាប់ការបញ្ជា",
+        stampLine3: "ទិញរបស់លោកអ្នក",
+        thanksShopping: "សូមអរគុណសម្រាប់ការគាំទ្រហាងយើងខ្ញុំ! ♥"
+    }
+};
+
 /**
  * Generates a styled order receipt image as a PNG buffer.
  *
@@ -14,9 +109,13 @@ const { createCanvas, loadImage } = require('canvas');
  * @param {string} data.paymentStatus   - e.g. "pending"
  * @param {Buffer|null} data.qrBuffer   - QR code image buffer (optional)
  * @param {Date}   data.createdAt
+ * @param {string} data.lang            - "en" or "km" (optional)
  * @returns {Promise<Buffer>} PNG image buffer
  */
 async function generateReceipt(data) {
+    const lang = data.lang || 'en';
+    const t = receiptTranslations[lang] || receiptTranslations.en;
+
     const W = 900;
     const PADDING = 36;
     const COL_LEFT = PADDING;
@@ -116,19 +215,19 @@ async function generateReceipt(data) {
     ctx.font = 'bold 26px Arial';
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'left';
-    ctx.fillText('MY SHOP', 118, 62);
+    ctx.fillText(t.shopName, 118, 62);
     ctx.font = '13px Arial';
     ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    ctx.fillText('YOUR TRUSTED STORE', 120, 82);
+    ctx.fillText(t.shopSlogan, 120, 82);
 
     // Title
     ctx.font = 'bold 30px Arial';
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
-    ctx.fillText('ORDER RECEIPT', W / 2, 60);
+    ctx.fillText(t.receiptTitle, W / 2, 60);
     ctx.font = '13px Arial';
     ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    ctx.fillText('Thank you for your order!', W / 2, 82);
+    ctx.fillText(t.thankYouOrder, W / 2, 82);
 
     // Order ID box
     const orderBoxW = 190;
@@ -138,7 +237,7 @@ async function generateReceipt(data) {
     ctx.font = '11px Arial';
     ctx.fillStyle = 'rgba(255,255,255,0.8)';
     ctx.textAlign = 'left';
-    ctx.fillText('ORDER ID', W - 16 - orderBoxW, 58);
+    ctx.fillText(t.orderId, W - 16 - orderBoxW, 58);
     ctx.font = 'bold 17px Arial';
     ctx.fillStyle = '#ffffff';
     ctx.fillText(data.orderId, W - 16 - orderBoxW, 80);
@@ -149,14 +248,14 @@ async function generateReceipt(data) {
     const TWO_COL_TOP = curY;
 
     // LEFT: Customer Information
-    sectionHeader(ctx, 'CUSTOMER INFORMATION', COL_LEFT, curY, COL_WIDTH);
+    sectionHeader(ctx, t.custInfo, COL_LEFT, curY, COL_WIDTH);
     curY += 38;
 
     const customerFields = [
-        { icon: '👤', label: 'Name', value: `${data.user.firstName || ''} ${data.user.lastName || ''}`.trim() || data.user.username || 'N/A' },
-        { icon: '📞', label: 'Phone', value: data.phone || 'N/A' },
-        { icon: '📍', label: 'Address', value: data.address || 'N/A' },
-        { icon: '📅', label: 'Order Date', value: (data.createdAt || new Date()).toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) },
+        { icon: '👤', label: t.custName, value: `${data.user.firstName || ''} ${data.user.lastName || ''}`.trim() || data.user.username || 'N/A' },
+        { icon: '📞', label: t.custPhone, value: data.phone || 'N/A' },
+        { icon: '📍', label: t.custAddress, value: data.address || 'N/A' },
+        { icon: '📅', label: t.orderDate, value: (data.createdAt || new Date()).toLocaleString(lang === 'km' ? 'km-KH' : 'en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) },
     ];
 
     for (const f of customerFields) {
@@ -166,7 +265,6 @@ async function generateReceipt(data) {
         ctx.fillText(f.icon + '  ' + f.label, COL_LEFT + 8, curY);
         ctx.fillStyle = '#1a2e5e';
         ctx.font = 'bold 13px Arial';
-        // wrap long address
         const maxW = COL_WIDTH - 120;
         const valueX = COL_LEFT + 120;
         ctx.fillText(':', valueX - 10, curY);
@@ -179,19 +277,19 @@ async function generateReceipt(data) {
 
     // RIGHT: Order Summary
     let rightY = TWO_COL_TOP;
-    sectionHeader(ctx, 'ORDER SUMMARY', COL_RIGHT, rightY, COL_WIDTH);
+    sectionHeader(ctx, t.orderSummary, COL_RIGHT, rightY, COL_WIDTH);
     rightY += 38;
 
     // Table headers
     ctx.font = 'bold 12px Arial';
     ctx.fillStyle = '#555';
     ctx.textAlign = 'left';
-    ctx.fillText('ITEM', COL_RIGHT + 4, rightY);
+    ctx.fillText(t.itemCol, COL_RIGHT + 4, rightY);
     ctx.textAlign = 'center';
-    ctx.fillText('QTY', COL_RIGHT + COL_WIDTH - 150, rightY);
+    ctx.fillText(t.qtyCol, COL_RIGHT + COL_WIDTH - 150, rightY);
     ctx.textAlign = 'right';
-    ctx.fillText('PRICE', COL_RIGHT + COL_WIDTH - 70, rightY);
-    ctx.fillText('TOTAL', COL_RIGHT + COL_WIDTH, rightY);
+    ctx.fillText(t.priceCol, COL_RIGHT + COL_WIDTH - 70, rightY);
+    ctx.fillText(t.totalCol, COL_RIGHT + COL_WIDTH, rightY);
     rightY += 6;
 
     divider(ctx, rightY);
@@ -226,13 +324,13 @@ async function generateReceipt(data) {
     ctx.font = '13px Arial';
     ctx.fillStyle = '#555';
     ctx.textAlign = 'left';
-    ctx.fillText('Subtotal', COL_RIGHT + 4, rightY);
+    ctx.fillText(t.subtotal, COL_RIGHT + 4, rightY);
     ctx.textAlign = 'right';
     ctx.fillText(`$${subtotal.toFixed(2)}`, COL_RIGHT + COL_WIDTH, rightY);
     rightY += 24;
 
     const shipping = 3;
-    ctx.fillText('Shipping Fee', COL_RIGHT + 4, rightY);
+    ctx.fillText(t.shippingFee, COL_RIGHT + 4, rightY);
     ctx.textAlign = 'right';
     ctx.fillText(`$${shipping.toFixed(2)}`, COL_RIGHT + COL_WIDTH, rightY);
     ctx.textAlign = 'left';
@@ -244,7 +342,7 @@ async function generateReceipt(data) {
     ctx.font = 'bold 18px Arial';
     ctx.fillStyle = '#1a2e5e';
     ctx.textAlign = 'left';
-    ctx.fillText('TOTAL', COL_RIGHT + 4, rightY);
+    ctx.fillText(t.total, COL_RIGHT + 4, rightY);
     ctx.textAlign = 'right';
     ctx.fillText(`$${data.totalPrice.toFixed(2)}`, COL_RIGHT + COL_WIDTH, rightY);
 
@@ -257,7 +355,7 @@ async function generateReceipt(data) {
     const BOT_COL_W = (W - 2 * PADDING - 20) / 2;
 
     // LEFT: Payment Method (QR)
-    sectionHeader(ctx, 'PAYMENT METHOD', COL_LEFT, curY, BOT_COL_W);
+    sectionHeader(ctx, t.paymentMethod, COL_LEFT, curY, BOT_COL_W);
     curY += 38;
 
     const PAYMENT_BOX_TOP = curY;
@@ -281,16 +379,16 @@ async function generateReceipt(data) {
     ctx.fillText('KHQR', COL_LEFT + 14, curY + 30);
     ctx.font = '11px Arial';
     ctx.fillStyle = '#555';
-    ctx.fillText('Scan to Pay', COL_LEFT + 14, curY + 47);
+    ctx.fillText(t.scanToPay, COL_LEFT + 14, curY + 47);
 
     ctx.font = '11px Arial';
     ctx.fillStyle = '#555';
-    ctx.fillText('Scan the QR code', COL_LEFT + 14, curY + 68);
-    ctx.fillText('to complete payment', COL_LEFT + 14, curY + 84);
+    ctx.fillText(t.scanQrComplete, COL_LEFT + 14, curY + 68);
+    ctx.fillText(t.scanQrComplete2, COL_LEFT + 14, curY + 84);
 
     ctx.font = 'bold 11px Arial';
     ctx.fillStyle = '#888';
-    ctx.fillText('Amount to Pay', COL_LEFT + 14, curY + 104);
+    ctx.fillText(t.amountToPay, COL_LEFT + 14, curY + 104);
 
     ctx.font = 'bold 22px Arial';
     ctx.fillStyle = '#27ae60';
@@ -301,11 +399,11 @@ async function generateReceipt(data) {
     ctx.font = '11px Arial';
     ctx.fillStyle = '#e74c3c';
     ctx.textAlign = 'left';
-    ctx.fillText('⏳ QR will expire in 10 minutes.', COL_LEFT, PAYMENT_BOX_BOT);
+    ctx.fillText(t.qrExpire, COL_LEFT, PAYMENT_BOX_BOT);
 
     // RIGHT: Order Status + Notes
     let rightBotY = curY;
-    sectionHeader(ctx, 'ORDER STATUS', COL_RIGHT, rightBotY - 38, BOT_COL_W);
+    sectionHeader(ctx, t.orderStatus, COL_RIGHT, rightBotY - 38, BOT_COL_W);
 
     roundRect(ctx, COL_RIGHT, rightBotY, BOT_COL_W, 70, 10);
     ctx.fillStyle = '#f0f4ff';
@@ -319,18 +417,14 @@ async function generateReceipt(data) {
         data.status === 'shipping' ? '#2980b9' :
         data.status === 'completed' ? '#27ae60' : '#e74c3c';
 
-    const statusLabel = data.status === 'pending_payment' ? 'Pending Payment' :
-        data.status === 'pending' ? 'Confirmed' :
-        data.status === 'shipping' ? 'Shipped' :
-        data.status === 'completed' ? 'Completed' : data.status;
-
-    const payLabel = data.paymentStatus === 'paid' ? 'Paid ✅' : 'Awaiting Confirmation';
+    const statusLabel = t.statusLabels[data.status] || data.status;
+    const payLabel = data.paymentStatus === 'paid' ? t.paymentLabels.paid : t.paymentLabels.awaiting;
 
     ctx.font = '13px Arial';
     ctx.fillStyle = '#555';
     ctx.textAlign = 'left';
-    ctx.fillText('Status', COL_RIGHT + 14, rightBotY + 28);
-    ctx.fillText('Payment', COL_RIGHT + 14, rightBotY + 52);
+    ctx.fillText(t.status, COL_RIGHT + 14, rightBotY + 28);
+    ctx.fillText(t.payment, COL_RIGHT + 14, rightBotY + 52);
     ctx.fillText(':', COL_RIGHT + 100, rightBotY + 28);
     ctx.fillText(':', COL_RIGHT + 100, rightBotY + 52);
     ctx.font = 'bold 13px Arial';
@@ -341,14 +435,14 @@ async function generateReceipt(data) {
 
     rightBotY += 80 + 10;
 
-    sectionHeader(ctx, 'NOTES', COL_RIGHT, rightBotY, BOT_COL_W);
+    sectionHeader(ctx, t.notesHeader, COL_RIGHT, rightBotY, BOT_COL_W);
     rightBotY += 38;
 
     ctx.font = '12px Arial';
     ctx.fillStyle = '#555';
     ctx.textAlign = 'left';
-    ctx.fillText('• Please complete the payment within 10 minutes.', COL_RIGHT + 8, rightBotY);
-    ctx.fillText('• If you have any questions, please contact our support.', COL_RIGHT + 8, rightBotY + 20);
+    ctx.fillText(t.note1, COL_RIGHT + 8, rightBotY);
+    ctx.fillText(t.note2, COL_RIGHT + 8, rightBotY + 20);
 
     // Thank you stamp circle
     const STAMP_X = COL_RIGHT + BOT_COL_W - 56;
@@ -363,9 +457,9 @@ async function generateReceipt(data) {
     ctx.font = 'bold 10px Arial';
     ctx.fillStyle = '#1a2e5e';
     ctx.textAlign = 'center';
-    ctx.fillText('THANK YOU', STAMP_X, STAMP_Y - 12);
-    ctx.fillText('FOR YOUR', STAMP_X, STAMP_Y + 2);
-    ctx.fillText('ORDER', STAMP_X, STAMP_Y + 16);
+    ctx.fillText(t.stampLine1, STAMP_X, STAMP_Y - 12);
+    ctx.fillText(t.stampLine2, STAMP_X, STAMP_Y + 2);
+    ctx.fillText(t.stampLine3, STAMP_X, STAMP_Y + 16);
 
     // ── Footer ────────────────────────────────────────────────────────
     const FOOTER_Y = H - 16 - 50;
@@ -401,7 +495,7 @@ async function generateReceipt(data) {
     ctx.font = 'bold 14px Arial';
     ctx.fillStyle = '#1a2e5e';
     ctx.textAlign = 'right';
-    ctx.fillText('THANK YOU FOR SHOPPING WITH US! ♥', W - PADDING - 10, BAR_Y + 11);
+    ctx.fillText(t.thanksShopping, W - PADDING - 10, BAR_Y + 11);
 
     return canvas.toBuffer('image/png');
 }
