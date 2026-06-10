@@ -1018,7 +1018,7 @@ bot.hears(['📦 My Orders', '📦 ការបញ្ជាទិញរបស់
             const prodName = item.product ? item.product.name : t.deleted_product;
             itemList += `  • ${prodName} (x${item.quantity}) - $${item.price * item.quantity}\n`;
         });
-        msg += `🆔 *${t.order_details_id}:* \`${o.orderId || o._id}\`\n📋 *${t.order_details_products}:*\n${itemList}💰 *${t.order_details_total}:* $${o.totalPrice}\n⚡ *${t.order_details_status}:* ${o.status.toUpperCase()}\n📅 *${t.order_details_date}:* ${o.createdAt.toDateString()}\n───────────────────\n\n`;
+        msg += `🆔 *${t.order_details_id}:* \`${o.orderId || o._id}\`\n📋 *${t.order_details_products}:*\n${itemList}💰 *${t.order_details_total}:* $${o.totalPrice}\n⚡ *${t.order_details_status}:* ${o.status.toUpperCase().replace('_', ' ')}\n📅 *${t.order_details_date}:* ${o.createdAt.toDateString()}\n───────────────────\n\n`;
     }
 
     await ctx.replyWithMarkdown(msg);
@@ -1510,7 +1510,15 @@ bot.catch((err, ctx) => {
 });
 
 // Start bot
-bot.launch().then(() => console.log('Bot started')).catch(console.error);
+if (process.env.RENDER_EXTERNAL_URL) {
+    const webhookPath = `/telegraf-webhook-${process.env.BOT_TOKEN.slice(-10)}`;
+    app.use(bot.webhookCallback(webhookPath));
+    bot.telegram.setWebhook(`${process.env.RENDER_EXTERNAL_URL}${webhookPath}`)
+        .then(() => console.log(`Telegram Webhook set to: ${process.env.RENDER_EXTERNAL_URL}${webhookPath}`))
+        .catch(console.error);
+} else {
+    bot.launch().then(() => console.log('Bot started with long polling')).catch(console.error);
+}
 
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'));

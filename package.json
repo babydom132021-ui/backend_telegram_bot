@@ -12,7 +12,6 @@
   "dependencies": {
     "axios": "^1.17.0",
     "bakong-khqr": "^1.0.20",
-    "canvas": "^3.2.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
