@@ -263,6 +263,8 @@ async function checkBakongTransaction(paymentHash) {
             });
             if (response.data && response.data.status && response.data.status.code === 0 && response.data.data) {
                 return { success: true, data: response.data.data };
+            } else {
+                any404 = true;
             }
         } catch (err) {
             console.error(`Error checking Bakong API at ${baseUrl}:`, err.response ? err.response.status : err.message);
