@@ -1347,7 +1347,7 @@
     // --- AUTHENTICATION CHECK ---
     const adminKey = sessionStorage.getItem('adminKey');
     if (!adminKey) {
-      location.href = '/admin/login';
+      location.href = window.location.pathname.includes('/admin') ? '/admin/login' : './login.html';
     }
 
     // --- GLOBALS & STATE ---
@@ -1455,7 +1455,7 @@
     // --- LOGOUT ---
     function logout() {
       sessionStorage.removeItem('adminKey');
-      location.href = '/admin/login';
+      location.href = window.location.pathname.includes('/admin') ? '/admin/login' : './login.html';
     }
 
     // ─── OVERVIEW TAB LOGIC ───────────────────────────────────────────────────

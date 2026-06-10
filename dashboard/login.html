@@ -348,7 +348,7 @@
         const res = await fetch(API_BASE + '/admin/api/stats?key=' + encodeURIComponent(key));
         if (res.ok) {
           sessionStorage.setItem('adminKey', key);
-          location.href = '/admin';
+          location.href = window.location.pathname.includes('/admin') ? '/admin' : './';
         } else {
           throw new Error();
         }
