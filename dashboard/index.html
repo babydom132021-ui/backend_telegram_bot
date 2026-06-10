@@ -1330,6 +1330,20 @@
   </div>
 
   <script>
+    // Dynamic API Base URL depending on where this page is hosted
+    const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? '' 
+      : 'https://backend-telegram-bot.onrender.com'; // Replace this with your actual Render backend URL
+
+    // Intercept relative fetches to route to backend
+    const originalFetch = window.fetch;
+    window.fetch = function(url, options) {
+      if (typeof url === 'string' && url.startsWith('/admin/api')) {
+        url = API_BASE + url;
+      }
+      return originalFetch(url, options);
+    };
+
     // --- AUTHENTICATION CHECK ---
     const adminKey = sessionStorage.getItem('adminKey');
     if (!adminKey) {

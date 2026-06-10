@@ -1046,8 +1046,13 @@ Please click the button below to complete payment:`;
 // Add a simple express server to keep the process alive/healthy if deployed to cloud
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const app = express();
 app.use(express.json());
+app.use(cors({
+    origin: '*',
+    credentials: true
+}));
 
 // Admin Dashboard
 const adminApiRouter = require('./dashboard/api');

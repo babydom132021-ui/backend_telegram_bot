@@ -298,6 +298,11 @@
   </div>
 
   <script>
+    // Dynamic API Base URL depending on where this page is hosted
+    const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? '' 
+      : 'https://backend-telegram-bot.onrender.com'; // Replace this with your actual Render backend URL
+
     // Submit on Enter keypress
     document.getElementById('key').addEventListener('keydown', e => {
       if (e.key === 'Enter') login();
@@ -340,7 +345,7 @@
       btnSpinner.style.display = 'block';
 
       try {
-        const res = await fetch('/admin/api/stats?key=' + encodeURIComponent(key));
+        const res = await fetch(API_BASE + '/admin/api/stats?key=' + encodeURIComponent(key));
         if (res.ok) {
           sessionStorage.setItem('adminKey', key);
           location.href = '/admin';
