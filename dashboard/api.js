@@ -151,8 +151,38 @@ router.patch('/orders/:id/status', async (req, res) => {
         const { status } = req.body;
         const allowed = ['pending_payment', 'pending', 'shipping', 'completed'];
         if (!allowed.includes(status)) return res.status(400).json({ error: 'Invalid status' });
-        const order = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true });
+
+        const order = await Order.findById(req.params.id).populate('user');
         if (!order) return res.status(404).json({ error: 'Not found' });
+
+        const prevStatus = order.status;
+        order.status = status;
+
+        if (status === 'pending' || status === 'shipping' || status === 'completed') {
+            order.paymentStatus = 'paid';
+        } else if (status === 'pending_payment') {
+            order.paymentStatus = 'pending';
+        }
+
+        await order.save();
+
+        // Send Telegram notification on successful payment confirmation
+        if ((status === 'pending' || status === 'shipping' || status === 'completed') && prevStatus === 'pending_payment') {
+            if (order.user && order.user.telegramId && req.bot && req.translations && req.getMainMenu) {
+                const lang = order.user.language || 'en';
+                const t = req.translations[lang] || req.translations.en;
+                try {
+                    await req.bot.telegram.sendMessage(
+                        order.user.telegramId,
+                        t.payment_success.replace('{orderId}', order.orderId),
+                        { parse_mode: 'Markdown', ...req.getMainMenu(lang) }
+                    );
+                } catch (telegramErr) {
+                    console.error('Failed to send Telegram success notification:', telegramErr);
+                }
+            }
+        }
+
         res.json({ success: true, order });
     } catch (err) {
         res.status(500).json({ error: err.message });

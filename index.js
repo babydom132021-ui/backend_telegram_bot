@@ -1441,6 +1441,14 @@ app.use(cors({
     credentials: true
 }));
 
+// Attach bot and localization resources to request object
+app.use((req, res, next) => {
+    req.bot = bot;
+    req.translations = translations;
+    req.getMainMenu = getMainMenu;
+    next();
+});
+
 // Admin Dashboard
 const adminApiRouter = require('./dashboard/api');
 app.use('/admin/api', adminApiRouter);
