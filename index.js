@@ -835,13 +835,19 @@ bot.action('pay_now', async (ctx) => {
 
 ${t.scan_exp}`;
 
+        const keyboardButtons = [
+            [Markup.button.callback(t.check_status, `check_payment_${customOrderId}`)],
+            [Markup.button.callback(t.cancel_order_btn, `cancel_payment_${customOrderId}`)]
+        ];
+
+        if (process.env.BAKONG_DEV_BASE_API_URL && process.env.BAKONG_DEV_BASE_API_URL.includes('sit-api')) {
+            keyboardButtons.push([Markup.button.callback('🛠️ Simulate Success (Sandbox)', `simulate_payment_${customOrderId}`)]);
+        }
+
         const sentMsg = await ctx.replyWithPhoto({ source: qrBuffer }, {
             caption: msg,
             parse_mode: 'Markdown',
-            ...Markup.inlineKeyboard([
-                [Markup.button.callback(t.check_status, `check_payment_${customOrderId}`)],
-                [Markup.button.callback(t.cancel_order_btn, `cancel_payment_${customOrderId}`)]
-            ])
+            ...Markup.inlineKeyboard(keyboardButtons)
         });
 
         startPaymentPolling(customOrderId, user._id, ctx.chat.id, lang, sentMsg.message_id);
@@ -918,6 +924,35 @@ bot.action(/check_payment_(.+)/, async (ctx) => {
             await ctx.answerCbQuery(t.payment_failed_popup, { show_alert: true });
         }
     }
+});
+
+bot.action(/simulate_payment_(.+)/, async (ctx) => {
+    const orderId = ctx.match[1];
+    const user = await getUser(ctx);
+    const lang = user.language || 'en';
+    const t = translations[lang] || translations.en;
+
+    const order = await Order.findOne({ orderId }).populate('user');
+    if (!order) return ctx.answerCbQuery(t.order_not_found, { show_alert: true });
+
+    if (order.status !== 'pending_payment') {
+        return ctx.answerCbQuery(t.status_already.replace('{status}', order.status.toUpperCase()), { show_alert: true });
+    }
+
+    const updatedOrder = await Order.findOneAndUpdate(
+        { orderId, status: 'pending_payment' },
+        { status: 'pending', paymentStatus: 'paid' },
+        { new: true }
+    );
+
+    if (updatedOrder) {
+        await ctx.replyWithMarkdown(t.payment_success.replace('{orderId}', order.orderId), getMainMenu(lang));
+        try {
+            await ctx.deleteMessage();
+        } catch (e) {}
+    }
+
+    await ctx.answerCbQuery(t.payment_success_popup, { show_alert: true });
 });
 
 bot.action(/cancel_payment_(.+)/, async (ctx) => {
