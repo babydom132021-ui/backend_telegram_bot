@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MyShop Admin Dashboard</title>
   <!-- Google Fonts: Inter -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
   <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -49,7 +51,7 @@
       position: fixed;
       inset: 0;
       z-index: -1;
-      background: 
+      background:
         radial-gradient(ellipse at 10% 20%, rgba(99, 102, 241, 0.04) 0%, transparent 50%),
         radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
       pointer-events: none;
@@ -459,8 +461,15 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* Search & Filter Bar */
@@ -654,16 +663,40 @@
       transform: translateY(-1px);
     }
 
-    .btn-icon.edit:hover {
+    .btn-icon.edit {
+      background: var(--color-primary-glow);
       color: var(--color-primary);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+
+    .btn-icon.edit:hover {
+      background: var(--color-primary);
+      color: #fff;
       border-color: var(--color-primary);
-      background-color: var(--color-primary-glow);
+    }
+
+    .btn-icon.delete {
+      background: rgba(239, 68, 68, 0.08);
+      color: var(--color-danger);
+      border: 1px solid rgba(239, 68, 68, 0.25);
     }
 
     .btn-icon.delete:hover {
-      color: var(--color-danger);
+      background: var(--color-danger);
+      color: #fff;
       border-color: var(--color-danger);
-      background-color: rgba(239, 68, 68, 0.1);
+    }
+
+    .btn-icon.check-payment {
+      background: rgba(245, 158, 11, 0.08);
+      color: var(--color-warning);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .btn-icon.check-payment:hover {
+      background: var(--color-warning);
+      color: #fff;
+      border-color: var(--color-warning);
     }
 
     /* Modal dialog */
@@ -687,13 +720,20 @@
       width: 100%;
       max-width: 550px;
       overflow: hidden;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
       animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     @keyframes scaleUp {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
     .modal-header {
@@ -750,7 +790,9 @@
       letter-spacing: 0.5px;
     }
 
-    .form-group input, .form-group textarea, .form-group select {
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
       background-color: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border-color);
       border-radius: 10px;
@@ -762,7 +804,9 @@
       width: 100%;
     }
 
-    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
       border-color: var(--color-primary);
       box-shadow: 0 0 0 3px var(--color-primary-glow);
     }
@@ -782,7 +826,7 @@
       justify-content: center;
       overflow: hidden;
       margin-top: 8px;
-      background-color: rgba(0,0,0,0.1);
+      background-color: rgba(0, 0, 0, 0.1);
     }
 
     .image-preview-container img {
@@ -835,11 +879,11 @@
       border-radius: 50%;
     }
 
-    input:checked + .slider {
+    input:checked+.slider {
       background-color: var(--color-success);
     }
 
-    input:checked + .slider:before {
+    input:checked+.slider:before {
       transform: translateX(20px);
     }
 
@@ -870,16 +914,33 @@
       animation: slideInRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .toast.success { border-left-color: var(--color-success); }
-    .toast.error { border-left-color: var(--color-danger); }
-    .toast.warning { border-left-color: var(--color-warning); }
+    .toast.success {
+      border-left-color: var(--color-success);
+    }
+
+    .toast.error {
+      border-left-color: var(--color-danger);
+    }
+
+    .toast.warning {
+      border-left-color: var(--color-warning);
+    }
 
     .toast-icon {
       font-size: 18px;
     }
-    .toast.success .toast-icon { color: var(--color-success); }
-    .toast.error .toast-icon { color: var(--color-danger); }
-    .toast.warning .toast-icon { color: var(--color-warning); }
+
+    .toast.success .toast-icon {
+      color: var(--color-success);
+    }
+
+    .toast.error .toast-icon {
+      color: var(--color-danger);
+    }
+
+    .toast.warning .toast-icon {
+      color: var(--color-warning);
+    }
 
     .toast-content {
       font-size: 13px;
@@ -888,8 +949,15 @@
     }
 
     @keyframes slideInRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
 
     .toast.fade-out {
@@ -897,8 +965,15 @@
     }
 
     @keyframes slideOutRight {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(100%); opacity: 0; }
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
     }
 
     /* Pagination controls */
@@ -946,14 +1021,17 @@
     .table-container::-webkit-scrollbar {
       height: 6px;
     }
+
     .table-container::-webkit-scrollbar-track {
       background: rgba(255, 255, 255, 0.02);
       border-radius: 3px;
     }
+
     .table-container::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.1);
       border-radius: 3px;
     }
+
     .table-container::-webkit-scrollbar-thumb:hover {
       background: var(--color-primary);
     }
@@ -969,6 +1047,7 @@
       pointer-events: none;
       transition: opacity var(--transition-speed) ease;
     }
+
     .sidebar-overlay.open {
       opacity: 1;
       pointer-events: auto;
@@ -988,16 +1067,20 @@
       aside {
         transform: translateX(-100%);
       }
+
       aside.open {
         transform: translateX(0);
       }
+
       main {
         margin-left: 0;
         padding: 24px 20px;
       }
+
       .grid-two-cols {
         grid-template-columns: 1fr;
       }
+
       .hamburger {
         display: block !important;
       }
@@ -1008,14 +1091,17 @@
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 16px;
       }
+
       .content-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 16px;
       }
+
       .header-actions {
         width: 100%;
       }
+
       .header-actions .btn {
         width: 100%;
         justify-content: center;
@@ -1028,37 +1114,48 @@
         align-items: stretch;
         gap: 12px;
       }
+
       .filter-group {
         flex-direction: column;
         align-items: stretch;
         max-width: 100%;
         width: 100%;
       }
+
       .search-wrapper {
         max-width: 100%;
         width: 100%;
       }
+
       .filter-select {
         width: 100%;
       }
+
       .filter-bar .btn {
         width: 100%;
         justify-content: center;
       }
+
       .form-row {
         grid-template-columns: 1fr;
         gap: 12px;
       }
+
       .modal {
         border-radius: 16px;
       }
-      .modal-header, .modal-body, .modal-footer {
+
+      .modal-header,
+      .modal-body,
+      .modal-footer {
         padding: 16px;
       }
+
       .modal-footer {
         flex-direction: column;
         align-items: stretch;
       }
+
       .modal-footer .btn {
         width: 100%;
         justify-content: center;
@@ -1069,6 +1166,348 @@
       .products-grid {
         grid-template-columns: 1fr;
       }
+    }
+
+    /* Orders Grid styles */
+    .orders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+      margin-top: 20px;
+    }
+
+    .order-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+
+    .order-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(99, 102, 241, 0.2);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .order-card-header {
+      position: relative;
+      width: 100%;
+      height: 160px;
+      background-color: rgba(255, 255, 255, 0.02);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .order-card-header img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .order-image-placeholder {
+      font-size: 48px;
+      color: var(--text-muted);
+      opacity: 0.3;
+    }
+
+    .order-status-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+      color: #fff;
+    }
+
+    .status-badge-pending_payment {
+      background-color: var(--color-warning);
+    }
+
+    .status-badge-pending {
+      background-color: var(--color-primary);
+    }
+
+    .status-badge-shipping {
+      background-color: #3b82f6;
+    }
+
+    .status-badge-completed {
+      background-color: var(--color-success);
+    }
+
+    .order-card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex-grow: 1;
+    }
+
+    .order-card-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .order-card-title h4 {
+      font-size: 15px;
+      font-weight: 700;
+      font-family: monospace;
+      color: var(--text-main);
+    }
+
+    .order-card-date {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .order-customer-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background-color: rgba(0, 0, 0, 0.02);
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .order-customer-name {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-main);
+    }
+
+    .order-customer-username {
+      font-size: 12px;
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+
+    .order-customer-phone,
+    .order-customer-address {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .order-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 90px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .order-item-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      border-bottom: 1px dashed rgba(0, 0, 0, 0.05);
+      padding-bottom: 4px;
+    }
+
+    .order-item-name {
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .order-item-qty {
+      color: var(--text-muted);
+    }
+
+    .order-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      border-top: 1px solid var(--border-color);
+      background-color: rgba(0, 0, 0, 0.01);
+    }
+
+    .order-total-price {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .order-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .order-status-select {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      outline: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    /* Users Grid styles */
+    .users-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 20px;
+    }
+
+    .user-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+
+    .user-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(99, 102, 241, 0.2);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .user-card-header {
+      padding: 24px 20px 12px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .user-avatar-container {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-header-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow: hidden;
+    }
+
+    .user-card-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-card-username {
+      font-size: 12px;
+      color: var(--color-primary);
+      text-decoration: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex-grow: 1;
+    }
+
+    .user-info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .user-info-item i {
+      margin-top: 2px;
+      width: 14px;
+      text-align: center;
+    }
+
+    .user-stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .user-stat-card {
+      background-color: rgba(0, 0, 0, 0.01);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .user-stat-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .user-stat-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .user-stat-value.revenue {
+      color: var(--color-success);
+    }
+
+    .user-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      border-top: 1px solid var(--border-color);
+      background-color: rgba(0, 0, 0, 0.01);
+    }
+
+    .user-admin-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
     }
 
     .hamburger {
@@ -1082,6 +1521,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="ambient-bg"></div>
 
@@ -1214,7 +1654,8 @@
           <div class="card-header">
             <h3>Orders status distribution</h3>
           </div>
-          <div style="position: relative; height: 300px; width: 100%; display: flex; justify-content: center; align-items: center;">
+          <div
+            style="position: relative; height: 300px; width: 100%; display: flex; justify-content: center; align-items: center;">
             <canvas id="statusChart"></canvas>
           </div>
         </div>
@@ -1226,7 +1667,8 @@
         <div class="card">
           <div class="card-header">
             <h3>Recent Orders</h3>
-            <button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="switchTab('orders')">View All</button>
+            <button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="switchTab('orders')">View
+              All</button>
           </div>
           <div class="table-container">
             <table>
@@ -1251,7 +1693,8 @@
         <div class="card">
           <div class="card-header">
             <h3>Top Products</h3>
-            <button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="switchTab('products')">View All</button>
+            <button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="switchTab('products')">View
+              All</button>
           </div>
           <div class="table-container">
             <table>
@@ -1279,7 +1722,8 @@
         <div class="filter-bar">
           <div class="search-wrapper">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="order-search" placeholder="Search by Order ID..." oninput="handleOrderFilterChange()"/>
+            <input type="text" id="order-search" placeholder="Search by Order ID..."
+              oninput="handleOrderFilterChange()" />
           </div>
           <select id="order-status-filter" class="filter-select" onchange="handleOrderFilterChange()">
             <option value="all">All Statuses</option>
@@ -1290,26 +1734,9 @@
           </select>
         </div>
 
-        <div class="table-container" style="margin-top: 20px;">
-          <table>
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer Details</th>
-                <th>Delivery Address</th>
-                <th>Items</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="orders-table-body">
-              <tr>
-                <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Loading orders...</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="orders-grid" id="orders-grid-container">
+          <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 30px;">Loading orders...
+          </div>
         </div>
 
         <div class="pagination">
@@ -1328,7 +1755,8 @@
         <div class="filter-group">
           <div class="search-wrapper">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="product-search" placeholder="Search products..." oninput="handleProductFilterChange()"/>
+            <input type="text" id="product-search" placeholder="Search products..."
+              oninput="handleProductFilterChange()" />
           </div>
           <select id="product-category-filter" class="filter-select" onchange="handleProductFilterChange()">
             <option value="all">All Categories</option>
@@ -1361,28 +1789,14 @@
         <div class="filter-bar">
           <div class="search-wrapper">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="user-search" placeholder="Search by name, username..." oninput="handleUserFilterChange()"/>
+            <input type="text" id="user-search" placeholder="Search by name, username..."
+              oninput="handleUserFilterChange()" />
           </div>
         </div>
 
-        <div class="table-container" style="margin-top: 20px;">
-          <table>
-            <thead>
-              <tr>
-                <th>Telegram ID</th>
-                <th>Name / Username</th>
-                <th>Contact Info</th>
-                <th>Orders</th>
-                <th>Total Spent</th>
-                <th>Admin Access</th>
-              </tr>
-            </thead>
-            <tbody id="users-table-body">
-              <tr>
-                <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">Loading users...</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="users-grid" id="users-grid-container">
+          <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 30px;">Loading users...
+          </div>
         </div>
 
         <div class="pagination">
@@ -1404,10 +1818,10 @@
         <button class="modal-close" onclick="closeProductModal()">&times;</button>
       </div>
       <div class="modal-body">
-        <input type="hidden" id="edit-prod-id"/>
+        <input type="hidden" id="edit-prod-id" />
         <div class="form-group">
           <label for="prod-name">Product Name *</label>
-          <input type="text" id="prod-name" placeholder="e.g. iPhone 15 Pro" required/>
+          <input type="text" id="prod-name" placeholder="e.g. iPhone 15 Pro" required />
         </div>
         <div class="form-group">
           <label for="prod-desc">Description</label>
@@ -1416,23 +1830,24 @@
         <div class="form-row">
           <div class="form-group">
             <label for="prod-price">Price ($) *</label>
-            <input type="number" id="prod-price" min="0" step="0.01" placeholder="999.00" required/>
+            <input type="number" id="prod-price" min="0" step="0.01" placeholder="999.00" required />
           </div>
           <div class="form-group">
             <label for="prod-stock">Stock Level *</label>
-            <input type="number" id="prod-stock" min="0" step="1" placeholder="10" required/>
+            <input type="number" id="prod-stock" min="0" step="1" placeholder="10" required />
           </div>
         </div>
         <div class="form-group">
           <label for="prod-category">Category *</label>
-          <input type="text" id="prod-category" list="category-suggestions" placeholder="e.g. Electronics" required/>
+          <input type="text" id="prod-category" list="category-suggestions" placeholder="e.g. Electronics" required />
           <datalist id="category-suggestions"></datalist>
         </div>
         <div class="form-group">
           <label for="prod-image">Image URL</label>
-          <input type="text" id="prod-image" placeholder="https://images.unsplash.com/..." oninput="updateModalImagePreview(this.value)"/>
+          <input type="text" id="prod-image" placeholder="https://images.unsplash.com/..."
+            oninput="updateModalImagePreview(this.value)" />
           <div class="image-preview-container">
-            <img id="modal-image-preview" style="display:none;" src="" alt="Preview"/>
+            <img id="modal-image-preview" style="display:none;" src="" alt="Preview" />
             <span id="modal-image-placeholder" class="product-image-placeholder">
               <i class="fa-regular fa-image"></i>
             </span>
@@ -1449,12 +1864,12 @@
   <script>
     // Dynamic API Base URL depending on where this page is hosted
     const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-      ? '' 
+      ? ''
       : 'https://backend-telegram-bot.onrender.com'; // Replace this with your actual Render backend URL
 
     // Intercept relative fetches to route to backend
     const originalFetch = window.fetch;
-    window.fetch = function(url, options) {
+    window.fetch = function (url, options) {
       if (typeof url === 'string' && url.startsWith('/admin/api')) {
         url = API_BASE + url;
       }
@@ -1508,7 +1923,7 @@
     // --- NAVIGATION TAB SWITCHER ---
     function switchTab(tabName) {
       currentTab = tabName;
-      
+
       // Update sidebar links active class
       document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
@@ -1598,7 +2013,7 @@
         document.getElementById('stat-revenue').textContent = `$${data.totalRevenue.toFixed(2)}`;
         document.getElementById('stat-orders').textContent = data.totalOrders;
         document.getElementById('stat-users').textContent = data.totalUsers;
-        
+
         const lowStockCount = data.lowStockProducts;
         document.getElementById('stat-low-stock').textContent = lowStockCount;
         const lowStockCard = document.getElementById('low-stock-card');
@@ -1651,7 +2066,7 @@
       if (revenueChart) revenueChart.destroy();
 
       // Sort revenue data chronologically
-      const sortedRev = [...revenueData].sort((a,b) => a._id.localeCompare(b._id));
+      const sortedRev = [...revenueData].sort((a, b) => a._id.localeCompare(b._id));
       const labels = sortedRev.map(item => {
         const date = new Date(item._id);
         return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
@@ -1756,58 +2171,90 @@
 
         oState.total = data.total;
 
-        // Render Table Rows
-        const tbody = document.getElementById('orders-table-body');
+        // Render Cards
+        const grid = document.getElementById('orders-grid-container');
         if (!data.orders || data.orders.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">No matching orders found.</td></tr>`;
+          grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">No matching orders found.</div>`;
         } else {
-          tbody.innerHTML = data.orders.map(o => {
+          grid.innerHTML = data.orders.map(o => {
             const dateStr = new Date(o.createdAt).toLocaleDateString(undefined, {
               month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
             });
             const itemsHtml = o.items.map(item => `
-              <div style="font-size:12px; margin-bottom: 2px;">
-                <strong>${item.name}</strong> <span style="color:var(--text-muted);">x${item.quantity}</span>
+              <div class="order-item-row">
+                <span class="order-item-name">${item.name}</span>
+                <span class="order-item-qty">x${item.quantity}</span>
               </div>
             `).join('');
 
+            const firstItemImage = o.items[0]?.image || '';
+            const otherItemsCount = o.items.length - 1;
+
             return `
-              <tr>
-                <td><span style="font-family: monospace; font-weight:700;">#${(o.orderId || o._id).slice(-8)}</span></td>
-                <td>
-                  <div style="font-weight:600;">${o.user.name}</div>
-                  <div style="font-size:12px; color:var(--text-muted);">
-                    ${o.user.username ? `<a href="https://t.me/${o.user.username}" target="_blank" style="color:var(--color-primary);text-decoration:none;">@${o.user.username}</a>` : 'No Username'}
-                    (${o.user.telegramId || 'N/A'})
+              <div class="order-card">
+                <div class="order-card-header">
+                  ${firstItemImage ? `
+                    <img src="${firstItemImage}" alt="${o.items[0]?.name || 'Product'}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"/>
+                    <span class="order-image-placeholder" style="display:none;"><i class="fa-solid fa-box-open"></i></span>
+                  ` : `
+                    <span class="order-image-placeholder"><i class="fa-solid fa-box-open"></i></span>
+                  `}
+                  <span class="order-status-badge status-badge-${o.status}">${formatStatusText(o.status)}</span>
+                  ${otherItemsCount > 0 ? `<span style="position: absolute; bottom: 12px; left: 12px; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; background-color: rgba(0,0,0,0.65); color: #fff;">+${otherItemsCount} more item${otherItemsCount > 1 ? 's' : ''}</span>` : ''}
+                </div>
+                <div class="order-card-body">
+                  <div class="order-card-title">
+                    <h4>#${(o.orderId || o._id).slice(-8)}</h4>
+                    <span class="order-card-date">${dateStr}</span>
                   </div>
-                  <div style="font-size:12px; font-weight:500; margin-top:2px;"><i class="fa-solid fa-phone" style="font-size:10px;"></i> ${o.phone || '—'}</div>
-                </td>
-                <td><div style="max-width: 180px; font-size:13px; line-height: 1.4;">${o.address || '—'}</div></td>
-                <td>${itemsHtml}</td>
-                <td style="font-weight: 700; font-size: 15px;">$${o.totalPrice.toFixed(2)}</td>
-                <td>
-                  <select class="status-select" onchange="updateOrderStatus('${o._id}', this.value)">
-                    <option value="pending_payment" ${o.status==='pending_payment'?'selected':''}>Pending Payment</option>
-                    <option value="pending" ${o.status==='pending'?'selected':''}>Pending (Paid)</option>
-                    <option value="shipping" ${o.status==='shipping'?'selected':''}>Shipping</option>
-                    <option value="completed" ${o.status==='completed'?'selected':''}>Completed</option>
-                  </select>
-                </td>
-                <td style="font-size: 12px; color:var(--text-muted);">${dateStr}</td>
-                <td>
-                  <button class="btn-icon delete" onclick="deleteOrder('${o._id}', '${o.orderId || o._id}')" title="Delete Order">
-                    <i class="fa-solid fa-trash-can"></i>
-                  </button>
-                </td>
-              </tr>
+                  
+                  <div class="order-customer-info">
+                    <div class="order-customer-name">${o.user.name}</div>
+                    <div>
+                      ${o.user.username ? `<a href="https://t.me/${o.user.username}" target="_blank" class="order-customer-username">@${o.user.username}</a>` : '<span style="font-size:11px; color:var(--text-muted);">No Username</span>'}
+                      <span style="font-size:11px; color:var(--text-muted);">(${o.user.telegramId || 'N/A'})</span>
+                    </div>
+                    <div class="order-customer-phone" style="margin-top: 4px;">
+                      <i class="fa-solid fa-phone"></i> ${o.phone || '—'}
+                    </div>
+                    <div class="order-customer-address">
+                      <i class="fa-solid fa-house"></i> ${o.address || '—'}
+                    </div>
+                  </div>
+
+                  <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-top: 4px; letter-spacing: 0.5px;">Items Ordered</div>
+                  <div class="order-items-list">
+                    ${itemsHtml}
+                  </div>
+                </div>
+                <div class="order-card-footer">
+                  <div class="order-total-price">$${o.totalPrice.toFixed(2)}</div>
+                  <div class="order-actions">
+                    ${o.status === 'pending_payment' ? `
+                      <button class="btn-icon check-payment" onclick="checkOrderPayment('${o._id}', '${o.orderId || o._id}')" title="Auto Check Payment Status">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                      </button>
+                    ` : ''}
+                    <select class="order-status-select" onchange="updateOrderStatus('${o._id}', this.value)">
+                      <option value="pending_payment" ${o.status === 'pending_payment' ? 'selected' : ''}>Pending Payment</option>
+                      <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>Pending (Paid)</option>
+                      <option value="shipping" ${o.status === 'shipping' ? 'selected' : ''}>Shipping</option>
+                      <option value="completed" ${o.status === 'completed' ? 'selected' : ''}>Completed</option>
+                    </select>
+                    <button class="btn-icon delete" onclick="deleteOrder('${o._id}', '${o.orderId || o._id}')" title="Delete Order">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
             `;
           }).join('');
         }
 
         // Update Pagination Info
-        document.getElementById('orders-pagination-info').textContent = 
-          `Showing ${(oState.page-1)*oState.limit + 1} - ${Math.min(oState.page*oState.limit, oState.total)} of ${oState.total} orders`;
-        
+        document.getElementById('orders-pagination-info').textContent =
+          `Showing ${(oState.page - 1) * oState.limit + 1} - ${Math.min(oState.page * oState.limit, oState.total)} of ${oState.total} orders`;
+
         document.getElementById('btn-orders-prev').disabled = oState.page <= 1;
         document.getElementById('btn-orders-next').disabled = oState.page * oState.limit >= oState.total;
 
@@ -1840,6 +2287,29 @@
         loadOrders();
       } catch (err) {
         showToast('Error updating status: ' + err.message, 'error');
+      }
+    }
+
+    async function checkOrderPayment(id, readableId) {
+      showToast('Checking payment status with Bakong...', 'info');
+      try {
+        const res = await fetch(`/admin/api/orders/${id}/check-payment?key=${encodeURIComponent(adminKey)}`, {
+          method: 'POST',
+          headers: apiHeaders
+        });
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.error || 'Failed to check payment');
+        }
+        const data = await res.json();
+        if (data.paid) {
+          showToast(`Payment verified! Order #${readableId.slice(-8)} status updated to Paid.`, 'success');
+          loadOrders();
+        } else {
+          showToast(`Unpaid: ${data.message || 'Payment is still pending.'}`, 'warning');
+        }
+      } catch (err) {
+        showToast('Error checking payment: ' + err.message, 'error');
       }
     }
 
@@ -1879,12 +2349,12 @@
         // Render product category filter options & modal suggestions list
         const catFilter = document.getElementById('product-category-filter');
         const catDataList = document.getElementById('category-suggestions');
-        
+
         // Save current selected value
         const currentSelectedCat = catFilter.value;
-        
+
         // Rebuild categories
-        catFilter.innerHTML = '<option value="all">All Categories</option>' + 
+        catFilter.innerHTML = '<option value="all">All Categories</option>' +
           data.categories.map(c => `<option value="${c}">${c}</option>`).join('');
         catFilter.value = currentSelectedCat;
 
@@ -1931,9 +2401,9 @@
         }
 
         // Update Pagination Info
-        document.getElementById('products-pagination-info').textContent = 
-          `Showing ${(pState.page-1)*pState.limit + 1} - ${Math.min(pState.page*pState.limit, pState.total)} of ${pState.total} products`;
-        
+        document.getElementById('products-pagination-info').textContent =
+          `Showing ${(pState.page - 1) * pState.limit + 1} - ${Math.min(pState.page * pState.limit, pState.total)} of ${pState.total} products`;
+
         document.getElementById('btn-products-prev').disabled = pState.page <= 1;
         document.getElementById('btn-products-next').disabled = pState.page * pState.limit >= pState.total;
 
@@ -1988,7 +2458,7 @@
       modal.style.display = 'flex';
 
       // Close modal on click outside of the modal body
-      modal.onclick = function(e) {
+      modal.onclick = function (e) {
         if (e.target === modal) {
           closeProductModal();
         }
@@ -2041,7 +2511,7 @@
         });
 
         if (!res.ok) throw new Error('Failed to save product');
-        
+
         showToast(id ? 'Product updated successfully' : 'Product created successfully');
         closeProductModal();
         loadProducts();
@@ -2082,38 +2552,82 @@
 
         uState.total = data.total;
 
-        // Render Table Rows
-        const tbody = document.getElementById('users-table-body');
+        // Render Cards
+        const grid = document.getElementById('users-grid-container');
         if (!data.users || data.users.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">No matching users found.</td></tr>`;
+          grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">No matching users found.</div>`;
         } else {
-          tbody.innerHTML = data.users.map(u => `
-            <tr>
-              <td><span style="font-family: monospace; font-weight:700;">${u.telegramId}</span></td>
-              <td>
-                <div style="font-weight:600;">${u.name}</div>
-                ${u.username ? `<a href="https://t.me/${u.username}" target="_blank" style="font-size:12px; color:var(--color-primary); text-decoration:none;">@${u.username}</a>` : '<span style="font-size:12px; color:var(--text-muted);">No Username</span>'}
-              </td>
-              <td>
-                <div style="font-size:13px;"><i class="fa-solid fa-phone" style="font-size:10px; color:var(--text-muted);"></i> ${u.phone || '—'}</div>
-                <div style="font-size:12px; color:var(--text-muted); margin-top:2px;"><i class="fa-solid fa-house" style="font-size:10px;"></i> ${u.address || '—'}</div>
-              </td>
-              <td style="font-weight:600;">${u.orderCount} orders</td>
-              <td style="font-weight:700; color:var(--color-success);">$${u.totalSpent.toFixed(2)}</td>
-              <td>
-                <label class="switch">
-                  <input type="checkbox" ${u.isAdmin ? 'checked' : ''} onchange="toggleUserAdmin('${u._id}', this.checked)"/>
-                  <span class="slider"></span>
-                </label>
-              </td>
-            </tr>
-          `).join('');
+          grid.innerHTML = data.users.map(u => {
+            const initials = u.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || u.username?.slice(0, 2).toUpperCase() || 'U';
+
+            // Simple hash for gradient background
+            let hash = 0;
+            for (let i = 0; i < u.name.length; i++) {
+              hash = u.name.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const colors = [
+              ['#6366f1', '#a855f7'],
+              ['#10b981', '#059669'],
+              ['#f59e0b', '#d97706'],
+              ['#3b82f6', '#1d4ed8'],
+              ['#ec4899', '#be185d'],
+              ['#14b8a6', '#0f766e']
+            ];
+            const colorPair = colors[Math.abs(hash) % colors.length];
+            const gradientStyle = `background: linear-gradient(135deg, ${colorPair[0]} 0%, ${colorPair[1]} 100%)`;
+
+            return `
+              <div class="user-card">
+                <div class="user-card-header">
+                  <div class="user-avatar-container" style="${gradientStyle}">
+                    ${initials}
+                  </div>
+                  <div class="user-header-info">
+                    <div class="user-card-name">${u.name}</div>
+                    ${u.username ? `<a href="https://t.me/${u.username}" target="_blank" class="user-card-username">@${u.username}</a>` : '<span style="font-size:12px; color:var(--text-muted);">No Username</span>'}
+                  </div>
+                </div>
+                <div class="user-card-body">
+                  <div class="user-info-item">
+                    <i class="fa-solid fa-hashtag"></i>
+                    <span>ID: <span style="font-family: monospace; font-weight: 600;">${u.telegramId}</span></span>
+                  </div>
+                  <div class="user-info-item">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>${u.phone || '—'}</span>
+                  </div>
+                  <div class="user-info-item">
+                    <i class="fa-solid fa-house"></i>
+                    <span>${u.address || '—'}</span>
+                  </div>
+                  
+                  <div class="user-stats-row">
+                    <div class="user-stat-card">
+                      <div class="user-stat-label">Orders</div>
+                      <div class="user-stat-value">${u.orderCount}</div>
+                    </div>
+                    <div class="user-stat-card">
+                      <div class="user-stat-label">Total Spent</div>
+                      <div class="user-stat-value revenue">$${u.totalSpent.toFixed(2)}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="user-card-footer">
+                  <span class="user-admin-label">Admin Access</span>
+                  <label class="switch">
+                    <input type="checkbox" ${u.isAdmin ? 'checked' : ''} onchange="toggleUserAdmin('${u._id}', this.checked)"/>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            `;
+          }).join('');
         }
 
         // Update Pagination Info
-        document.getElementById('users-pagination-info').textContent = 
-          `Showing ${(uState.page-1)*uState.limit + 1} - ${Math.min(uState.page*uState.limit, uState.total)} of ${uState.total} users`;
-        
+        document.getElementById('users-pagination-info').textContent =
+          `Showing ${(uState.page - 1) * uState.limit + 1} - ${Math.min(uState.page * uState.limit, uState.total)} of ${uState.total} users`;
+
         document.getElementById('btn-users-prev').disabled = uState.page <= 1;
         document.getElementById('btn-users-next').disabled = uState.page * uState.limit >= uState.total;
 
@@ -2155,4 +2669,5 @@
     }
   </script>
 </body>
+
 </html>

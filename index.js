@@ -250,7 +250,7 @@ function startPaymentPolling(orderId, userId, chatId, lang, messageId = null) {
         if (Date.now() > expireTime) {
             clearInterval(timer);
             delete activePollers[orderId];
-            
+
             try {
                 const order = await Order.findOne({ orderId });
                 if (order && order.status === 'pending_payment') {
@@ -271,7 +271,7 @@ function startPaymentPolling(orderId, userId, chatId, lang, messageId = null) {
                     if (messageId) {
                         try {
                             await bot.telegram.deleteMessage(chatId, messageId);
-                        } catch (e) {}
+                        } catch (e) { }
                     }
                 }
             } catch (err) {
@@ -300,22 +300,38 @@ function startPaymentPolling(orderId, userId, chatId, lang, messageId = null) {
             if (response.data && response.data.status && response.data.status.code === 0 && response.data.data) {
                 const updatedOrder = await Order.findOneAndUpdate(
                     { orderId, status: 'pending_payment' },
-                    { status: 'pending', paymentStatus: 'paid' },
+                    { 
+                        status: 'pending', 
+                        paymentStatus: 'paid',
+                        paymentDetails: response.data.data,
+                        paidAt: new Date()
+                    },
                     { new: true }
                 );
 
                 if (updatedOrder) {
-                    const t = translations[lang] || translations.en;
+                    const successMsg = lang === 'km'
+                        ? `✅ ការទូទាត់ទទួលបានជោគជ័យ។ ការបញ្ជាទិញរបស់អ្នកត្រូវបានបញ្ជាក់។\n\n` +
+                          `🧾 *ព័ត៌មានលម្អិតការទូទាត់:*\n` +
+                          `- *លេខសំគាល់ការបញ្ជាទិញ:* \`${updatedOrder.orderId}\`\n` +
+                          `- *ចំនួនទឹកប្រាក់:* \`$${updatedOrder.totalPrice.toFixed(2)}\`\n` +
+                          `- *ស្ថានភាពទូទាត់:* \`Paid\``
+                        : `✅ Payment received successfully. Your order has been confirmed.\n\n` +
+                          `🧾 *Payment Details:*\n` +
+                          `- *Order ID:* \`${updatedOrder.orderId}\`\n` +
+                          `- *Amount:* \`$${updatedOrder.totalPrice.toFixed(2)}\`\n` +
+                          `- *Payment Status:* \`Paid\``;
+
                     await bot.telegram.sendMessage(
                         chatId,
-                        t.payment_success.replace('{orderId}', orderId),
+                        successMsg,
                         { parse_mode: 'Markdown', ...getMainMenu(lang) }
                     );
 
                     if (messageId) {
                         try {
                             await bot.telegram.deleteMessage(chatId, messageId);
-                        } catch (e) {}
+                        } catch (e) { }
                     }
                 }
 
@@ -393,7 +409,7 @@ bot.hears(['🌐 Language / ភាសា'], async (ctx) => {
     const user = await getUser(ctx);
     const lang = user.language || 'en';
     const t = translations[lang] || translations.en;
-    
+
     await ctx.reply(t.select_lang, Markup.inlineKeyboard([
         [
             Markup.button.callback('🇺🇸 English', 'set_lang_en'),
@@ -425,7 +441,7 @@ bot.hears(['🛍️ Shop Products', '🛍️ ទិញទំនិញ'], async (
     const user = await getUser(ctx);
     const lang = user.language || 'en';
     const t = translations[lang] || translations.en;
-    
+
     const categories = await Product.distinct('category');
     if (categories.length === 0) {
         return ctx.reply(t.no_categories);
@@ -489,7 +505,7 @@ bot.action(/prod_(.+)/, async (ctx) => {
     if (!product) return ctx.reply(t.product_not_found);
 
     const message = `📦 *${product.name}*\n\n📝 ${product.description || t.no_description}\n\n💰 ${t.price}: $${product.price}\n📊 ${t.stock}: ${product.stock > 0 ? product.stock : t.out_of_stock}`;
-    
+
     const buttons = [];
     if (product.stock > 0) {
         buttons.push([Markup.button.callback(t.add_to_cart, `add_${product._id}`)]);
@@ -555,7 +571,7 @@ async function viewCart(ctx) {
         const itemTotal = item.product.price * item.quantity;
         total += itemTotal;
         message += `📦 *${item.product.name}*\n   ${t.price}: $${item.product.price} | ${t.qty}: ${item.quantity}\n   Subtotal: $${itemTotal}\n\n`;
-        
+
         buttons.push([
             Markup.button.callback(`➖`, `dec_${item.product._id}`),
             Markup.button.callback(`${t.qty}: ${item.quantity}`, `noop`),
@@ -565,7 +581,7 @@ async function viewCart(ctx) {
     });
 
     message += `*${t.total_price}: $${total}*`;
-    
+
     if (total > 0) {
         buttons.push([
             Markup.button.callback(t.checkout, 'checkout'),
@@ -597,7 +613,7 @@ bot.action(/add_(.+)/, async (ctx) => {
     const lang = user.language || 'en';
     const t = translations[lang] || translations.en;
     const product = await Product.findById(productId);
-    
+
     if (!product || product.stock <= 0) {
         return ctx.answerCbQuery(lang === 'km' ? 'អស់ពីស្តុក ឬរកមិនឃើញផលិតផល។' : 'Out of stock or not found.', { show_alert: true });
     }
@@ -615,7 +631,7 @@ bot.action(/add_(.+)/, async (ctx) => {
     }
 
     await cart.save();
-    
+
     const addedMsg = lang === 'km' ? `បានដាក់ ${product.name} ទៅក្នុងរទេះ!` : `${product.name} added to cart!`;
     await ctx.answerCbQuery(addedMsg);
     await ctx.reply(`🛒 ${lang === 'km' ? `បានដាក់ចូលក្នុងរទេះ៖` : 'Added'} *${product.name}* ${lang === 'km' ? 'រួចរាល់!' : 'to your cart!'}`, {
@@ -687,8 +703,8 @@ bot.action(/inc_(.+)/, async (ctx) => {
             await cart.save();
             await ctx.answerCbQuery(lang === 'km' ? 'បានបង្កើនចំនួន។' : 'Quantity increased.');
         } else {
-            const stockMsg = lang === 'km' 
-                ? `មិនអាចបន្ថែមបានទៀតទេ។ សល់ត្រឹមតែ ${product.stock} គ្រឿងក្នុងស្តុក។` 
+            const stockMsg = lang === 'km'
+                ? `មិនអាចបន្ថែមបានទៀតទេ។ សល់ត្រឹមតែ ${product.stock} គ្រឿងក្នុងស្តុក។`
                 : `Cannot add more. Only ${product.stock} items left in stock.`;
             await ctx.answerCbQuery(stockMsg, { show_alert: true });
         }
@@ -868,21 +884,71 @@ bot.action(/check_payment_(.+)/, async (ctx) => {
     const order = await Order.findOne({ orderId }).populate('user');
     if (!order) return ctx.answerCbQuery(t.order_not_found, { show_alert: true });
 
+    // Handle non-pending_payment statuses (Prevent duplicate verification/action)
     if (order.status !== 'pending_payment') {
         if (order.status === 'pending' || order.status === 'completed' || order.status === 'shipping') {
             try {
                 await ctx.deleteMessage();
-            } catch (e) {}
-            await ctx.reply(t.payment_success.replace('{orderId}', order.orderId), { parse_mode: 'Markdown', ...getMainMenu(lang) });
-            return ctx.answerCbQuery(t.payment_success_popup, { show_alert: true });
+            } catch (e) { }
+            const successMsg = lang === 'km'
+                ? `✅ ការទូទាត់ទទួលបានជោគជ័យ។ ការបញ្ជាទិញរបស់អ្នកត្រូវបានបញ្ជាក់។\n\n` +
+                  `🧾 *ព័ត៌មានលម្អិតការទូទាត់:*\n` +
+                  `- *លេខសំគាល់ការបញ្ជាទិញ:* \`${order.orderId}\`\n` +
+                  `- *ចំនួនទឹកប្រាក់:* \`$${order.totalPrice.toFixed(2)}\`\n` +
+                  `- *ស្ថានភាពទូទាត់:* \`Paid\``
+                : `✅ Payment received successfully. Your order has been confirmed.\n\n` +
+                  `🧾 *Payment Details:*\n` +
+                  `- *Order ID:* \`${order.orderId}\`\n` +
+                  `- *Amount:* \`$${order.totalPrice.toFixed(2)}\`\n` +
+                  `- *Payment Status:* \`Paid\``;
+            await ctx.reply(successMsg, { parse_mode: 'Markdown', ...getMainMenu(lang) });
+            return ctx.answerCbQuery(
+                lang === 'km' ? 'ការទូទាត់ទទួលបានជោគជ័យ! 🎉' : 'Payment successful! 🎉',
+                { show_alert: true }
+            );
+        } else if (order.status === 'cancelled') {
+            try {
+                await ctx.deleteMessage();
+            } catch (e) { }
+            return ctx.answerCbQuery(
+                lang === 'km'
+                    ? "❌ ការទូទាត់មិនទាន់បានបញ្ចប់ ឬហួសពេលកំណត់។ សូមបង្កើតកូដ QR ថ្មីហើយព្យាយាមម្តងទៀត។"
+                    : "❌ Payment was not completed or has expired. Please generate a new QR code and try again.",
+                { show_alert: true }
+            );
         } else {
             return ctx.answerCbQuery(t.status_already.replace('{status}', order.status.toUpperCase()), { show_alert: true });
         }
     }
 
+    // Check expiration (older than 10 minutes)
+    const isExpired = (Date.now() - order.createdAt.getTime()) > (10 * 60 * 1000);
+    if (isExpired) {
+        const updatedOrder = await Order.findOneAndUpdate(
+            { orderId, status: 'pending_payment' },
+            { status: 'cancelled' },
+            { new: true }
+        );
+        if (updatedOrder) {
+            // Restore stock
+            for (let item of order.items) {
+                await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
+            }
+        }
+        try {
+            await ctx.deleteMessage();
+        } catch (e) {}
+        return ctx.answerCbQuery(
+            lang === 'km'
+                ? "❌ ការទូទាត់មិនទាន់បានបញ្ចប់ ឬហួសពេលកំណត់។ សូមបង្កើតកូដ QR ថ្មីហើយព្យាយាមម្តងទៀត។"
+                : "❌ Payment was not completed or has expired. Please generate a new QR code and try again.",
+            { show_alert: true }
+        );
+    }
+
     const axios = require('axios');
     const url = `${process.env.BAKONG_DEV_BASE_API_URL}/check_transaction_by_md5`;
-    
+
     try {
         const response = await axios.post(url, { md5: order.paymentHash }, {
             headers: {
@@ -894,28 +960,63 @@ bot.action(/check_payment_(.+)/, async (ctx) => {
         if (response.data && response.data.status && response.data.status.code === 0 && response.data.data) {
             const updatedOrder = await Order.findOneAndUpdate(
                 { orderId, status: 'pending_payment' },
-                { status: 'pending', paymentStatus: 'paid' },
+                { 
+                    status: 'pending', 
+                    paymentStatus: 'paid',
+                    paymentDetails: response.data.data,
+                    paidAt: new Date()
+                },
                 { new: true }
             );
 
             if (updatedOrder) {
-                await ctx.reply(t.payment_success.replace('{orderId}', order.orderId), { parse_mode: 'Markdown', ...getMainMenu(lang) });
+                const successMsg = lang === 'km'
+                    ? `✅ ការទូទាត់ទទួលបានជោគជ័យ។ ការបញ្ជាទិញរបស់អ្នកត្រូវបានបញ្ជាក់។\n\n` +
+                      `🧾 *ព័ត៌មានលម្អិតការទូទាត់:*\n` +
+                      `- *លេខសំគាល់ការបញ្ជាទិញ:* \`${updatedOrder.orderId}\`\n` +
+                      `- *ចំនួនទឹកប្រាក់:* \`$${updatedOrder.totalPrice.toFixed(2)}\`\n` +
+                      `- *ស្ថានភាពទូទាត់:* \`Paid\``
+                    : `✅ Payment received successfully. Your order has been confirmed.\n\n` +
+                      `🧾 *Payment Details:*\n` +
+                      `- *Order ID:* \`${updatedOrder.orderId}\`\n` +
+                      `- *Amount:* \`$${updatedOrder.totalPrice.toFixed(2)}\`\n` +
+                      `- *Payment Status:* \`Paid\``;
+
+                await ctx.reply(successMsg, { parse_mode: 'Markdown', ...getMainMenu(lang) });
                 try {
                     await ctx.deleteMessage();
-                } catch (e) {}
+                } catch (e) { }
             }
 
-            await ctx.answerCbQuery(t.payment_success_popup, { show_alert: true });
+            await ctx.answerCbQuery(
+                lang === 'km' ? 'ការទូទាត់ទទួលបានជោគជ័យ! 🎉' : 'Payment successful! 🎉',
+                { show_alert: true }
+            );
         } else {
-            await ctx.answerCbQuery(t.payment_pending_popup, { show_alert: true });
+            await ctx.answerCbQuery(
+                lang === 'km'
+                    ? "⏳ មិនទាន់រកឃើញការទូទាត់ប្រាក់នៅឡើយទេ។ សូមរង់ចាំបន្តិច រួចព្យាយាមម្តងទៀត។"
+                    : "⏳ Payment not detected yet. Please wait a moment and try again.",
+                { show_alert: true }
+            );
         }
     } catch (err) {
         console.error('Error verifying payment:', err.response ? err.response.data : err.message);
         const status = err.response ? err.response.status : null;
-        if (status === 502 || status === 503 || status === 504 || status === 500 || !err.response) {
-            await ctx.answerCbQuery(t.payment_pending_popup, { show_alert: true });
+        if (status === 404 || status === 502 || status === 503 || status === 504 || status === 500 || !err.response) {
+            await ctx.answerCbQuery(
+                lang === 'km'
+                    ? "⏳ មិនទាន់រកឃើញការទូទាត់ប្រាក់នៅឡើយទេ។ សូមរង់ចាំបន្តិច រួចព្យាយាមម្តងទៀត។"
+                    : "⏳ Payment not detected yet. Please wait a moment and try again.",
+                { show_alert: true }
+            );
         } else {
-            await ctx.answerCbQuery(t.payment_failed_popup, { show_alert: true });
+            await ctx.answerCbQuery(
+                lang === 'km'
+                    ? "❌ ការទូទាត់មិនទាន់បានបញ្ចប់ ឬហួសពេលកំណត់។ សូមបង្កើតកូដ QR ថ្មីហើយព្យាយាមម្តងទៀត។"
+                    : "❌ Payment was not completed or has expired. Please generate a new QR code and try again.",
+                { show_alert: true }
+            );
         }
     }
 });
@@ -972,7 +1073,7 @@ bot.action(/cancel_payment_(.+)/, async (ctx) => {
         await ctx.reply(t.order_cancelled.replace('{orderId}', order.orderId), getMainMenu(lang));
         try {
             await ctx.deleteMessage();
-        } catch (e) {}
+        } catch (e) { }
     } else {
         await ctx.reply(t.order_cannot_cancel);
     }
@@ -1030,26 +1131,26 @@ bot.command('admin', async (ctx) => {
     if (!user.isAdmin) {
         return ctx.reply('You do not have permission to access the Admin Panel.');
     }
-    
+
     const adminMenu = Markup.inlineKeyboard([
         [Markup.button.callback('➕ Add Product', 'admin_add_prod')],
         [Markup.button.callback('✏️ Manage Products', 'admin_manage_prods')],
         [Markup.button.callback('📦 Manage Orders', 'admin_manage_orders')]
     ]);
-    
+
     await ctx.reply('⚙️ *Admin Control Panel*:', { parse_mode: 'Markdown', ...adminMenu });
 });
 
 bot.action('back_admin', async (ctx) => {
     const user = await getUser(ctx);
     if (!user.isAdmin) return ctx.answerCbQuery('Access Denied.');
-    
+
     const adminMenu = Markup.inlineKeyboard([
         [Markup.button.callback('➕ Add Product', 'admin_add_prod')],
         [Markup.button.callback('✏️ Manage Products', 'admin_manage_prods')],
         [Markup.button.callback('📦 Manage Orders', 'admin_manage_orders')]
     ]);
-    
+
     await ctx.reply('⚙️ *Admin Control Panel*:', { parse_mode: 'Markdown', ...adminMenu });
     await ctx.answerCbQuery();
 });
@@ -1156,7 +1257,7 @@ bot.action('admin_manage_orders', async (ctx) => {
 
     const buttons = orders.map(o => [Markup.button.callback(`Order #${o._id.toString().slice(-6)} - ${o.status.toUpperCase()}`, `admin_view_order_${o._id}`)]);
     buttons.push([Markup.button.callback('⬅️ Back to Admin', 'back_admin')]);
-    
+
     await ctx.reply('Select an order to view and manage status:', Markup.inlineKeyboard(buttons));
     await ctx.answerCbQuery();
 });
@@ -1211,7 +1312,7 @@ bot.action(/admin_status_(.+)_(pending|shipping|completed)/, async (ctx) => {
 
     const oldStatus = order.status;
     order.status = newStatus;
-    
+
     if (newStatus === 'pending' && oldStatus === 'pending_payment') {
         order.paymentStatus = 'paid';
     }
@@ -1227,7 +1328,7 @@ bot.action(/admin_status_(.+)_(pending|shipping|completed)/, async (ctx) => {
             const lang = user.language || 'en';
             let notification = '';
             if (newStatus === 'pending' && oldStatus === 'pending_payment') {
-                notification = lang === 'km' 
+                notification = lang === 'km'
                     ? `🎉 *ការទូទាត់ជោគជ័យ!*\nការបញ្ជាទិញរបស់អ្នក \`${order.orderId}\` ត្រូវបានបញ្ជាក់។`
                     : `🎉 *Payment Successful!*\nYour order \`${order.orderId}\` has been confirmed.`;
             } else if (newStatus === 'shipping') {
@@ -1396,7 +1497,7 @@ ${lang === 'km' ? 'សូមចុចប៊ូតុងខាងក្រោម�
             if (text.toLowerCase() !== 'skip') {
                 ctx.session.newProduct.image = text;
             }
-            
+
             // Save Product
             const prod = new Product(ctx.session.newProduct);
             await prod.save();
@@ -1462,7 +1563,7 @@ app.post('/payment-webhook', async (req, res) => {
     try {
         console.log('Payment Webhook Received:', req.body);
         const { md5, orderId, hash } = req.body;
-        
+
         let query = {};
         if (md5) query.paymentHash = md5;
         else if (orderId) query.orderId = orderId;
@@ -1477,15 +1578,28 @@ app.post('/payment-webhook', async (req, res) => {
         if (order.status === 'pending_payment') {
             order.status = 'pending';
             order.paymentStatus = 'paid';
+            order.paymentDetails = req.body;
+            order.paidAt = new Date();
             await order.save();
 
             // Notify user via Telegram Bot
             if (order.user && order.user.telegramId) {
                 const lang = order.user.language || 'en';
-                const t = translations[lang] || translations.en;
+                const successMsg = lang === 'km'
+                    ? `✅ ការទូទាត់ទទួលបានជោគជ័យ។ ការបញ្ជាទិញរបស់អ្នកត្រូវបានបញ្ជាក់។\n\n` +
+                      `🧾 *ព័ត៌មានលម្អិតការទូទាត់:*\n` +
+                      `- *លេខសំគាល់ការបញ្ជាទិញ:* \`${order.orderId}\`\n` +
+                      `- *ចំនួនទឹកប្រាក់:* \`$${order.totalPrice.toFixed(2)}\`\n` +
+                      `- *ស្ថានភាពទូទាត់:* \`Paid\``
+                    : `✅ Payment received successfully. Your order has been confirmed.\n\n` +
+                      `🧾 *Payment Details:*\n` +
+                      `- *Order ID:* \`${order.orderId}\`\n` +
+                      `- *Amount:* \`$${order.totalPrice.toFixed(2)}\`\n` +
+                      `- *Payment Status:* \`Paid\``;
+
                 await bot.telegram.sendMessage(
-                    order.user.telegramId, 
-                    t.payment_success.replace('{orderId}', order.orderId),
+                    order.user.telegramId,
+                    successMsg,
                     { parse_mode: 'Markdown', ...getMainMenu(lang) }
                 );
             }

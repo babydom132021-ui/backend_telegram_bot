@@ -159,6 +159,73 @@ router.patch('/orders/:id/status', async (req, res) => {
     }
 });
 
+router.post('/orders/:id/check-payment', async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id).populate('user');
+        if (!order) return res.status(404).json({ error: 'Order not found' });
+
+        if (order.status !== 'pending_payment') {
+            return res.status(400).json({ error: 'Order is not pending payment' });
+        }
+
+        const axios = require('axios');
+        const url = `${process.env.BAKONG_DEV_BASE_API_URL}/check_transaction_by_md5`;
+
+        let response;
+        try {
+            response = await axios.post(url, { md5: order.paymentHash }, {
+                headers: {
+                    'Authorization': `Bearer ${process.env.BAKONG_TOKEN}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+        } catch (axiosErr) {
+            console.error('Bakong API request failed:', axiosErr.message);
+            const status = axiosErr.response ? axiosErr.response.status : null;
+            let msg = 'Transaction not found or Bakong API is temporarily unavailable.';
+            if (status === 404) {
+                msg = 'Transaction not found in Bakong system. The customer might not have paid yet.';
+            } else if (status === 502 || status === 503) {
+                msg = 'Bakong Gateway/API is temporarily unavailable (502/503).';
+            } else if (axiosErr.response && axiosErr.response.data && axiosErr.response.data.message) {
+                msg = axiosErr.response.data.message;
+            }
+            return res.json({ success: true, paid: false, message: msg });
+        }
+
+        if (response.data && response.data.status && response.data.status.code === 0 && response.data.data) {
+            const updatedOrder = await Order.findOneAndUpdate(
+                { _id: req.params.id, status: 'pending_payment' },
+                { status: 'pending', paymentStatus: 'paid' },
+                { new: true }
+            );
+
+            if (updatedOrder) {
+                // Send Telegram notification on successful payment confirmation
+                if (order.user && order.user.telegramId && req.bot && req.translations && req.getMainMenu) {
+                    const lang = order.user.language || 'en';
+                    const t = req.translations[lang] || req.translations.en;
+                    try {
+                        await req.bot.telegram.sendMessage(
+                            order.user.telegramId,
+                            t.payment_success.replace('{orderId}', order.orderId),
+                            { parse_mode: 'Markdown', ...req.getMainMenu(lang) }
+                        );
+                    } catch (telegramErr) {
+                        console.error('Failed to send Telegram success notification:', telegramErr);
+                    }
+                }
+                return res.json({ success: true, paid: true, order: updatedOrder });
+            }
+        }
+
+        return res.json({ success: true, paid: false, message: 'Transaction not found or still pending in Bakong system' });
+    } catch (err) {
+        console.error('Error in /orders/:id/check-payment:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 router.delete('/orders/:id', async (req, res) => {
     try {
         await Order.findByIdAndDelete(req.params.id);

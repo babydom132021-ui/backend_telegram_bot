@@ -16,6 +16,8 @@ const orderSchema = new mongoose.Schema({
     address: String,
     paymentStatus: { type: String, default: 'pending' },
     paymentHash: String,
+    paymentDetails: mongoose.Schema.Types.Mixed,
+    paidAt: Date,
     createdAt: { type: Date, default: Date.now },
 });
 
