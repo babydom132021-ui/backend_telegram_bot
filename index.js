@@ -84,7 +84,7 @@ bot.use(async (ctx, next) => {
 // Localization Translations
 const translations = {
     en: {
-        welcome: "Welcome to our E-commerce Store! 🏪\nPlease choose an option below:\n(P.S. Send /adminsecret to become an admin for testing)",
+        welcome: "Welcome to our E-commerce Store! 🏪\nPlease choose an option below:",
         menu_shop: "🛍️ Shop Products",
         menu_search: "🔎 Search",
         menu_cart: "🛒 My Cart",
@@ -157,7 +157,7 @@ const translations = {
         order_details_date: "Date"
     },
     km: {
-        welcome: "សូមស្វាគមន៍មកកាន់ហាងទំនិញរបស់យើង! 🏪\nសូមជ្រើសរើសជម្រើសខាងក្រោម៖\n(ផ្ញើ /adminsecret ដើម្បីក្លាយជា Admin សម្រាប់ការសាកល្បង)",
+        welcome: "សូមស្វាគមន៍មកកាន់ហាងទំនិញរបស់យើង! 🏪\nសូមជ្រើសរើសជម្រើសខាងក្រោម៖",
         menu_shop: "🛍️ ទិញទំនិញ",
         menu_search: "🔎 ស្វែងរក",
         menu_cart: "🛒 រទេះរបស់ខ្ញុំ",
