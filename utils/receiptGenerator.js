@@ -42,9 +42,6 @@ const receiptTranslations = {
         notesHeader: "NOTES",
         note1: "• Please complete the payment within 10 minutes.",
         note2: "• If you have any questions, please contact our support.",
-        stampLine1: "THANK YOU",
-        stampLine2: "FOR YOUR",
-        stampLine3: "ORDER",
         thanksShopping: "THANK YOU FOR SHOPPING WITH US! ♥"
     },
     km: {
@@ -88,9 +85,6 @@ const receiptTranslations = {
         notesHeader: "កំណត់ចំណាំ",
         note1: "• សូមបញ្ចប់ការទូទាត់ក្នុងរយៈពេល ១០ នាទី។",
         note2: "• ប្រសិនបើមានចម្ងល់ សូមទាក់ទងមកផ្នែកគាំទ្ររបស់យើង។",
-        stampLine1: "សូមអរគុណ",
-        stampLine2: "សម្រាប់ការបញ្ជា",
-        stampLine3: "ទិញរបស់លោកអ្នក",
         thanksShopping: "សូមអរគុណសម្រាប់ការគាំទ្រហាងយើងខ្ញុំ! ♥"
     }
 };
@@ -444,22 +438,6 @@ async function generateReceipt(data) {
     ctx.fillText(t.note1, COL_RIGHT + 8, rightBotY);
     ctx.fillText(t.note2, COL_RIGHT + 8, rightBotY + 20);
 
-    // Thank you stamp circle
-    const STAMP_X = COL_RIGHT + BOT_COL_W - 56;
-    const STAMP_Y = rightBotY + 30;
-    ctx.beginPath();
-    ctx.arc(STAMP_X, STAMP_Y, 44, 0, Math.PI * 2);
-    ctx.strokeStyle = '#1a2e5e';
-    ctx.lineWidth = 3;
-    ctx.setLineDash([5, 3]);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.font = 'bold 10px Arial';
-    ctx.fillStyle = '#1a2e5e';
-    ctx.textAlign = 'center';
-    ctx.fillText(t.stampLine1, STAMP_X, STAMP_Y - 12);
-    ctx.fillText(t.stampLine2, STAMP_X, STAMP_Y + 2);
-    ctx.fillText(t.stampLine3, STAMP_X, STAMP_Y + 16);
 
     // ── Footer ────────────────────────────────────────────────────────
     const FOOTER_Y = H - 16 - 50;

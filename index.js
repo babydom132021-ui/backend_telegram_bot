@@ -524,6 +524,7 @@ bot.action(/rm_(.+)/, async (ctx) => {
 
     if (cart) {
         cart.items = cart.items.filter(item => item.product && item.product.toString() !== productId);
+        cart.markModified('items');
         await cart.save();
         await ctx.answerCbQuery(lang === 'km' ? 'បានលុបទំនិញ។' : 'Item removed.');
         await viewCart(ctx);
@@ -545,6 +546,7 @@ bot.action(/dec_(.+)/, async (ctx) => {
             await ctx.answerCbQuery(lang === 'km' ? 'បានកាត់បន្ថយចំនួន។' : 'Quantity decreased.');
         } else {
             cart.items = cart.items.filter(item => item.product && item.product.toString() !== productId);
+            cart.markModified('items');
             await cart.save();
             await ctx.answerCbQuery(lang === 'km' ? 'បានលុបទំនិញពីរទេះ។' : 'Item removed from cart.');
         }
